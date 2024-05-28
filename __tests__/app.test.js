@@ -48,7 +48,6 @@ describe("GET /api/articles/:article_id", () => {
             .expect("Content-Type", "application/json; charset=utf-8")
             .then(({ body }) => {
                 const { article } = body;
-                console.log(article);
                 expect(typeof article.author).toBe("string");
                 expect(article.author).toEqual("butter_bridge");
                 expect(typeof article.title).toBe("string");
