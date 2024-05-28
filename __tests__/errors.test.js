@@ -13,8 +13,27 @@ describe("GET /nonValidRoute", () => {
         return request(app)
         .get("/nonValidRoute")
         .expect(404)
-        .then(( { body }) => {
+        .then(( { body } ) => {
             expect(body.msg).toBe("Not found");
         })
     })
 })
+
+describe("GET /api/article/:article_id", () => {
+    test("400 responds when valid path but invalid id", () => {
+        return request(app)
+        .get("/api/articles/invalidId")
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("404 responds when valid id but is non-existent", () => {
+        return request(app)
+            .get("/api/articles/111111")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article 111111 does not exist");
+            });
+    });
+});
