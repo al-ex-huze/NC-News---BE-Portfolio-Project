@@ -1,11 +1,18 @@
 const db = require("../db/connection.js");
 
+exports.selectArticles = () => {
+    let queryStr = "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+
+    return db.query(queryStr)
+    .then(( { rows } ) => {
+        return rows;
+    })
+}
+
 exports.selectArticleById = (article_id) => {
-    let queryStr = "SELECT author, title, article_id, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id = $1";
+    let queryStr = "SELECT author, title, article_id, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id = $1;";
 
     const queryValue = [article_id];
-
-    queryStr += " ;";
 
     return db.query(queryStr, queryValue)
     .then(( { rows } ) => {

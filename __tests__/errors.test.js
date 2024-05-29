@@ -17,9 +17,6 @@ describe("GET /nonValidRoute", () => {
             expect(body.msg).toBe("Not found");
         })
     })
-})
-
-describe("GET /api/article/:article_id", () => {
     test("400 responds when valid path but invalid id", () => {
         return request(app)
         .get("/api/articles/invalidId")
