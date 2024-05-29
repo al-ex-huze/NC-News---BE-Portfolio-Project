@@ -28,7 +28,7 @@ exports.selectArticleById = (article_id) => {
 }
 
 exports.selectCommentsByArticleId = (article_id) => {
-    const queryStr = "SELECT comment_id, votes, created_at, author, article_id FROM comments WHERE article_id = $1;";
+    const queryStr = "SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = $1 ORDER BY created_at DESC;";
 
     const queryValue = [article_id];
 

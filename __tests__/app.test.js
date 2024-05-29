@@ -101,17 +101,27 @@ describe("GET /api/articles/:article_id/comments", () => {
             .expect(200)
             .then(({ body }) => {
                 const { comments } = body;
-                // console.log(comments, "IN TEST");
-        //         expect(comments.length).toBe(11);
-        //         comments.forEach((comment) => {
-        //             expect(typeof comment.comment_id).toBe("number");
-        //             expect(typeof comment.votes).toBe("number");
-        //             expect(typeof comment.created_at).toBe("string");
-        //             expect(typeof comment.author).toBe("string");
-        //             expect(typeof comment.body).toBe("string");
-        //             expect(typeof comment.article_id).toBe("number");
-        //             expect(comment.article_id).toEqual(1);
-        //         });
+                expect(comments.length).toBe(11);
+                comments.forEach((comment) => {
+                    expect(typeof comment.comment_id).toBe("number");
+                    expect(typeof comment.votes).toBe("number");
+                    expect(typeof comment.created_at).toBe("string");
+                    expect(typeof comment.author).toBe("string");
+                    expect(typeof comment.body).toBe("string");
+                    expect(typeof comment.article_id).toBe("number");
+                    expect(comment.article_id).toEqual(1);
+                });
+            });
+    });
+    test("200 returns sorted by descending date order", () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const { comments } = body;
+                expect(comments).toBeSortedBy("created_at", {
+                    descending: true,
+                });
             });
     });
 });
