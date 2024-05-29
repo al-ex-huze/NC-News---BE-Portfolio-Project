@@ -38,3 +38,19 @@ exports.selectCommentsByArticleId = (article_id) => {
         return comments;
     })
 }
+
+exports.checkArticleExistence = (article_id) => {
+    const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
+
+    const queryValue = [article_id];
+
+    return db.query(queryStr, queryValue)
+    .then(( { rows } ) => {
+        if (rows.length === 0) {
+            return Promise.reject({
+                status: 404,
+                msg: `article ${article_id} does not exist`,
+            })
+        }
+    })
+}

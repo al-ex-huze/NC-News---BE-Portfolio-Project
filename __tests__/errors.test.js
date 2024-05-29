@@ -33,4 +33,20 @@ describe("GET /nonValidRoute", () => {
                 expect(body.msg).toBe("article 111111 does not exist");
             });
     });
+    test("400 responds when valid path to comments but invalid id", () => {
+        return request(app)
+        .get("/api/articles/invalidId/comments")
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("404 responds when valid id to comments but is non-existent", () => {
+        return request(app)
+            .get("/api/articles/222222/comments")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article 222222 does not exist");
+            });
+    });
 });

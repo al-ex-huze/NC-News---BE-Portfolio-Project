@@ -1,4 +1,4 @@
-const { selectArticles, selectArticleById, selectCommentsByArticleId 
+const { selectArticles, selectArticleById, selectCommentsByArticleId, checkArticleExistence 
 } = require("../models/articles.model.js")
 
 exports.getArticles = (req, res, next) => {
@@ -19,8 +19,17 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const { article_id } = req.params;
-    selectCommentsByArticleId(article_id)
-    .then((comments) => {
+
+    const promises = [selectCommentsByArticleId(article_id)];
+
+    if (article_id) {
+        promises.push(checkArticleExistence(article_id));
+    }
+
+    Promise.all(promises)
+    .then((resolves) => {
+        const comments = resolves[0];
         res.status(200).send( { comments } );
     })
+    .catch(next);
 }
