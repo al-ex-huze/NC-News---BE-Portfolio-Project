@@ -96,11 +96,12 @@ describe("GET /api/articles/:article_id", () => {
 
 describe("GET /api/articles/:article_id/comments", () => {
     test("200 returns an array of article objects for corresponding article ID", () => {
-        // return request(app)
-        //     .get("/api/articles")
-        //     .expect(200)
-        //     .then(({ body }) => {
-        //         const { comments } = body;
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const { comments } = body;
+                // console.log(comments, "IN TEST");
         //         expect(comments.length).toBe(11);
         //         comments.forEach((comment) => {
         //             expect(typeof comment.comment_id).toBe("number");
@@ -111,6 +112,6 @@ describe("GET /api/articles/:article_id/comments", () => {
         //             expect(typeof comment.article_id).toBe("number");
         //             expect(comment.article_id).toEqual(1);
         //         });
-        //     });
+            });
     });
 });
