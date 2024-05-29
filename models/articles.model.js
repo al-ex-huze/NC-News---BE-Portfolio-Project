@@ -39,6 +39,26 @@ exports.selectCommentsByArticleId = (article_id) => {
     })
 }
 
+exports.updateArticleVotes = (update, article_id, existingVotes) => {
+    const { inc_votes } = update;
+    const newVotesValue = existingVotes + inc_votes;
+    const queryStr = "UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;";
+
+    const queryValues = [newVotesValue, article_id];
+
+    return db.query(queryStr, queryValues)
+    .then(( { rows } ) => {
+        const article = rows[0];
+        if (article === undefined) {
+            return Promise.reject({
+                status: 404,
+                msg: `article ${article_id} does not exist`,
+            })
+        }
+        return article;
+    })
+}
+
 exports.checkArticleExistence = (article_id) => {
     const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
 

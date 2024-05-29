@@ -134,3 +134,20 @@ describe("GET /api/articles/:article_id/comments", () => {
             });
     });
 });
+
+describe("PUT /api/articles/:article_id", () => {
+    test("202 returns updated article", () => {
+        const putId = 1;
+        const update = {
+            inc_votes: 1000
+        };
+        return request(app)
+        .put(`/api/articles/${putId}`)
+        .send(update)
+        .expect(202)
+        .then(({ body }) => {
+            const { article } = body;
+            console.log(article, "<<- UPDATED ARTICLE")
+        })
+    })
+});
