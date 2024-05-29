@@ -91,3 +91,9 @@ describe("GET /api/articles/:article_id", () => {
             });
     });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("200 returns an array of article objects for corresponding article ID", () => { 
+
+    });
+});

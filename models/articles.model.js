@@ -26,3 +26,7 @@ exports.selectArticleById = (article_id) => {
         return article;
     })
 }
+
+exports.selectCommentsByArticleId = (article_id) => {
+    
+}
