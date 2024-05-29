@@ -35,7 +35,6 @@ exports.selectCommentsByArticleId = (article_id) => {
     return db.query(queryStr, queryValue)
     .then(( { rows } ) => {
         const comments = rows;
-        console.log(comments, "MODEL")
         return comments;
     })
 }
