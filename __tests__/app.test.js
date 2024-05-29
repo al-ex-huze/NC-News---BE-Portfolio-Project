@@ -124,4 +124,13 @@ describe("GET /api/articles/:article_id/comments", () => {
                 });
             });
     });
+    test("200 returns empty array when valid article but no comments", () => {
+        return request(app)
+            .get("/api/articles/8/comments")
+            .expect(200)
+            .then(({ body }) => {
+                const { comments } = body;
+                expect(comments).toEqual([]);
+            });
+    });
 });
