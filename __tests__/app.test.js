@@ -50,7 +50,6 @@ describe("GET /api/articles", () => {
                 const { articles } = body;
                 expect(articles.length).toBe(13);
                 articles.forEach((article) => {
-                    console.log(article)
                     expect(typeof article.author).toBe("string");
                     expect(typeof article.title).toBe("string");
                     expect(typeof article.article_id).toBe("number");
