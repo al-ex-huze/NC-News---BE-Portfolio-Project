@@ -39,25 +39,25 @@ exports.selectCommentsByArticleId = (article_id) => {
     })
 }
 
-// exports.insertCommentToArticle = (newComment, article_id) => {
-//     const { username, body } = newComment;
+exports.insertCommentToArticle = (newComment, article_id) => {
+    const { username, body } = newComment;
 
-//     if (typeof body !== "string") {
-//         return Promise.reject({
-//             status: 400,
-//             msg: "invalid input",
-//         })
-//     }
+    if (typeof body !== "string") {
+        return Promise.reject({
+            status: 400,
+            msg: "invalid input",
+        })
+    }
     
-//     const queryStr = "INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;"
+    const queryStr = "INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;"
 
-//     const queryValues = [username, body, article_id];
+    const queryValues = [username, body, article_id];
 
-//     return db.query(queryStr, queryValues)
-//     .then(( { rows } ) => {
-//         return comment = rows[0]
-//     })
-// }
+    return db.query(queryStr, queryValues)
+    .then(( { rows } ) => {
+        return comment = rows[0]
+    })
+}
 
 exports.checkArticleExistence = (article_id) => {
     const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
