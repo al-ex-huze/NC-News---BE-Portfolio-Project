@@ -48,7 +48,7 @@
         "format": "JSON",
         "queries": [],
         "exampleResponse": {
-            "articles": [
+            "comments": [
                 {
                     "comment_id": 5,
                     "votes": 0,
@@ -66,6 +66,21 @@
                     "article_id": 1
                 }
             ]
+        }
+    },
+    "POST /api/articles/:article_id/comment": {
+        "description": "posts a comment, of username and body, to the specified article and returns the full comment object",
+        "format": "JSON",
+        "queries": [],
+        "exampleResponse": {
+            "comment": {
+                "comment_id": 19,
+                "body": "test body",
+                "article_id": 3,
+                "author": "butter_bridge",
+                "votes": 0,
+                "created_at": "2024-05-29T13:48:31.656Z"
+            }
         }
     }
 }
