@@ -50,3 +50,58 @@ describe("GET /nonValidRoute", () => {
             });
     });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+    test("400 missing required fields", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: null
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 missing required fields", () => {
+        const newComment = {
+            username: null,
+            body: "test body"
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 incorrect fields", () => {
+        const newComment = {
+            username: 10,
+            body: "test body"
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 incorrect fields", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: 10
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+})

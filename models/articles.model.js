@@ -39,6 +39,8 @@ exports.selectCommentsByArticleId = (article_id) => {
     })
 }
 
+
+
 exports.checkArticleExistence = (article_id) => {
     const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
 
