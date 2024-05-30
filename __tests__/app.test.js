@@ -109,7 +109,7 @@ describe("GET /api/articles/:article_id/comments", () => {
                     expect(typeof comment.author).toBe("string");
                     expect(typeof comment.body).toBe("string");
                     expect(typeof comment.article_id).toBe("number");
-                    expect(comment.article_id).toEqual(1);
+                    expect(comment.article_id).toBe(1);
                 });
             });
     });
@@ -158,4 +158,36 @@ describe("POST /api/articles/:article_id/commments", () => {
                 expect(comment.article_id).toEqual(3);
             });
     });
+});
+
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("202 returns updated article", () => {
+        const patchId = 1;
+        const update = {
+            inc_votes: 1000
+        };
+        return request(app)
+        .patch(`/api/articles/${patchId}`)
+        .send(update)
+        .expect(202)
+        .then(({ body }) => {
+            const { article } = body;
+            expect(article.votes).toEqual(1100);
+        })
+    })
+    test("202 returns updated article", () => {
+        const patchId = 1;
+        const update = {
+            inc_votes: -1000
+        };
+        return request(app)
+        .patch(`/api/articles/${patchId}`)
+        .send(update)
+        .expect(202)
+        .then(({ body }) => {
+            const { article } = body;
+            expect(article.votes).toEqual(-900);
+        })
+    })
 });
