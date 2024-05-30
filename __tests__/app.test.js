@@ -80,22 +80,6 @@ describe("GET /api/articles", () => {
                 });
             });
     });
-    test("400 responds when valid path but invalid id", () => {
-        return request(app)
-            .get("/api/articles/invalidId")
-            .expect(400)
-            .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
-            });
-    });
-    test("404 responds when valid id but is non-existent", () => {
-        return request(app)
-            .get("/api/articles/111111")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("article 111111 does not exist");
-            });
-    });
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -114,6 +98,22 @@ describe("GET /api/articles/:article_id", () => {
                 expect(typeof article.created_at).toBe("string");
                 expect(typeof article.votes).toBe("number");
                 expect(typeof article.article_img_url).toBe("string");
+            });
+    });
+    test("400 responds when valid path but invalid id", () => {
+        return request(app)
+            .get("/api/articles/invalidId")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
+    test("404 responds when valid id but is non-existent", () => {
+        return request(app)
+            .get("/api/articles/111111")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article 111111 does not exist");
             });
     });
 });
@@ -334,6 +334,22 @@ describe("DELETE /api/comments/:comment_id", () => {
             .expect(204)
             .then(({ body }) => {
                 expect(body).toEqual({});
+            });
+    });
+    test("400 responds when invalid comment id", () => {
+        return request(app)
+            .delete("/api/comments/invalidId")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
+    test("404 responds when comment not found", () => {
+        return request(app)
+            .delete("/api/comments/333333")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("comment 333333 does not exist");
             });
     });
 });

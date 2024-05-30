@@ -27,5 +27,23 @@ exports.deleteCommentById = (comment_id) => {
     const queryValue = [comment_id];
 
     return db.query(queryStr, queryValue)
-    .then(() => {});
+    .then(() => {
+    });
+};
+
+exports.checkCommentExistence = (comment_id) => {
+    const queryStr = 
+    "SELECT * FROM comments WHERE comment_id = $1;";
+
+    const queryValue = [comment_id];
+
+    return db.query(queryStr, queryValue)
+    .then(({ rows }) => {
+        if (rows.length === 0) {
+            return Promise.reject({
+                status: 404,
+                msg: `comment ${comment_id} does not exist`,
+            });
+        }
+    });
 };
