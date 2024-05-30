@@ -1,10 +1,23 @@
 const db = require("../db/connection.js");
 
-exports.selectArticles = () => {
-    const queryStr =
-        "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) :: INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+exports.selectArticles = (validTopics, topic) => {
+    if (topic && !validTopics.includes(topic)) {
+        return Promise.reject({ status: 400, msg: "invalid query" });
+    }
 
-    return db.query(queryStr)
+    const queryValues = [];
+
+    let queryStr =
+        "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) :: INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
+
+    if (topic) {
+        queryStr += " WHERE topic = $1";
+        queryValues.push(topic);
+    }
+
+    queryStr += " GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+    
+    return db.query(queryStr, queryValues)
     .then(({ rows }) => {
         return rows;
     });

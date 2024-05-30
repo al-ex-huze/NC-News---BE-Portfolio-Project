@@ -1,3 +1,4 @@
+const { selectTopics } = require("../models/topics.model.js");
 const {
     selectArticles,
     selectArticleById,
@@ -7,9 +8,19 @@ const {
 } = require("../models/articles.model.js");
 
 exports.getArticles = (req, res, next) => {
-    selectArticles().then((articles) => {
-        res.status(200).send({ articles });
-    });
+    const { topic } = req.query;
+    selectTopics()
+        .then((topics) => {
+            const validTopics = [];
+            topics.forEach((topic) => {
+                validTopics.push(topic.slug);
+            })
+            return selectArticles(validTopics, topic);
+        })
+        .then((articles) => {
+            res.status(200).send({ articles });
+        })
+        .catch(next);
 };
 
 exports.getArticleById = (req, res, next) => {
