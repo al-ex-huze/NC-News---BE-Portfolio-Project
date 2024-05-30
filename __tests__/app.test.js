@@ -22,6 +22,14 @@ describe("GET /api", () => {
                 );
             });
     });
+    test("404 responds when route not found", () => {
+        return request(app)
+        .get("/nonValidRoute")
+        .expect(404)
+        .then(( { body } ) => {
+            expect(body.msg).toBe("Not found");
+        })
+    })
 });
 
 describe("GET /api/topics", () => {
@@ -72,6 +80,22 @@ describe("GET /api/articles", () => {
                 });
             });
     });
+    test("400 responds when valid path but invalid id", () => {
+        return request(app)
+        .get("/api/articles/invalidId")
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("404 responds when valid id but is non-existent", () => {
+        return request(app)
+            .get("/api/articles/111111")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article 111111 does not exist");
+            });
+    });
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -95,7 +119,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-    test("200 returns an array of article objects for corresponding article ID", () => {
+    test("200 returns array of comments for corresponding article ID", () => {
         return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -133,6 +157,22 @@ describe("GET /api/articles/:article_id/comments", () => {
                 expect(comments).toEqual([]);
             });
     });
+    test("400 responds when valid path to comments but invalid id", () => {
+        return request(app)
+        .get("/api/articles/invalidId/comments")
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("404 responds when valid id to comments but is non-existent", () => {
+        return request(app)
+            .get("/api/articles/222222/comments")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article 222222 does not exist");
+            });
+    });
 });
 
 describe("POST /api/articles/:article_id/commments", () => {
@@ -158,6 +198,58 @@ describe("POST /api/articles/:article_id/commments", () => {
                 expect(comment.article_id).toEqual(3);
             });
     });
+    test("400 missing required fields", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: null
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 missing required fields", () => {
+        const newComment = {
+            username: null,
+            body: "test body"
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 incorrect fields", () => {
+        const newComment = {
+            username: 10,
+            body: "test body"
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 incorrect fields", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: 10
+        };
+        return request(app)
+        .post("/api/articles/3/comments")
+        .send(newComment)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
 });
 
 
@@ -188,6 +280,50 @@ describe("PATCH /api/articles/:article_id", () => {
         .then(({ body }) => {
             const { article } = body;
             expect(article.votes).toEqual(-900);
+        })
+    })
+    test("400 missing required fields when request body is null", () => {
+        const update = {
+            inc_votes: null
+        };
+        return request(app)
+        .patch("/api/articles/1")
+        .send(update)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 missing required fields when request is null", () => {
+        const update = null;
+        return request(app)
+        .patch("/api/articles/1")
+        .send(update)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 incorrect fields of wrong property type", () => {
+        const update = {
+            inc_votes: "sausage"
+        };
+        return request(app)
+        .patch("/api/articles/1")
+        .send(update)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
+        })
+    })
+    test("400 incorrect type of request", () => {
+        const update = [1000];
+        return request(app)
+        .patch("/api/articles/1")
+        .send(update)
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid input");
         })
     })
 });
