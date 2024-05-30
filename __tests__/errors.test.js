@@ -107,22 +107,6 @@ describe("POST /api/articles/:article_id/comments", () => {
 })
 
 describe("PATCH /api/articles/:article_id", () => {
-    test("400 responds when valid path but invalid id", () => {
-        return request(app)
-        .get("/api/articles/invalidId")
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
-    test("404 responds when valid id but is non-existent", () => {
-        return request(app)
-            .get("/api/articles/333333")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("article 333333 does not exist");
-            });
-    });
     test("400 missing required fields when request body is null", () => {
         const update = {
             inc_votes: null
