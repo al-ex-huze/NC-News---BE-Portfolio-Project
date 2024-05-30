@@ -93,12 +93,12 @@ describe("GET /api/articles", () => {
     });
     test("400 returns invalid topic query", () => {
         return request(app)
-        .get("/api/articles?topic=invalid_topic")
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid query");
-        })
-    })
+            .get("/api/articles?topic=invalid_topic")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid query");
+            });
+    });
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -117,6 +117,16 @@ describe("GET /api/articles/:article_id", () => {
                 expect(typeof article.created_at).toBe("string");
                 expect(typeof article.votes).toBe("number");
                 expect(typeof article.article_img_url).toBe("string");
+            });
+    });
+    test("200 returns, now with comment count", () => {
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(({ body }) => {
+                const { article } = body;
+                console.log(article)
+                expect(typeof article.comment_count).toBe("number");
             });
     });
     test("400 responds when valid path but invalid id", () => {
@@ -415,7 +425,7 @@ describe("GET /api/users", () => {
             .get("/api/users")
             .expect(200)
             .then(({ body }) => {
-                const { users } = body;                
+                const { users } = body;
                 expect(users.length).toBe(4);
                 users.forEach((user) => {
                     expect(typeof user.username).toBe("string");
