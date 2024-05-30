@@ -68,7 +68,7 @@
             ]
         }
     },
-  "POST /api/articles/:article_id/comment": {
+    "POST /api/articles/:article_id/comment": {
         "description": "posts a comment, of username and body, to the specified article and returns the full comment object",
         "format": "JSON",
         "queries": [],
@@ -99,5 +99,11 @@
                 "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
             }
         }
+    },
+    "DELETE /api/comments/:comment_id": {
+        "description": "deletes comment, returning no content",
+        "format": "JSON",
+        "queries": [],
+        "exampleResponse": {}
     }
 }
