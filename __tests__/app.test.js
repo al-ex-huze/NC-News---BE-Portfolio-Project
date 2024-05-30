@@ -24,12 +24,12 @@ describe("GET /api", () => {
     });
     test("404 responds when route not found", () => {
         return request(app)
-        .get("/nonValidRoute")
-        .expect(404)
-        .then(( { body } ) => {
-            expect(body.msg).toBe("Not found");
-        })
-    })
+            .get("/nonValidRoute")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Not found");
+            });
+    });
 });
 
 describe("GET /api/topics", () => {
@@ -80,22 +80,6 @@ describe("GET /api/articles", () => {
                 });
             });
     });
-    test("400 responds when valid path but invalid id", () => {
-        return request(app)
-        .get("/api/articles/invalidId")
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
-    test("404 responds when valid id but is non-existent", () => {
-        return request(app)
-            .get("/api/articles/111111")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("article 111111 does not exist");
-            });
-    });
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -114,6 +98,22 @@ describe("GET /api/articles/:article_id", () => {
                 expect(typeof article.created_at).toBe("string");
                 expect(typeof article.votes).toBe("number");
                 expect(typeof article.article_img_url).toBe("string");
+            });
+    });
+    test("400 responds when valid path but invalid id", () => {
+        return request(app)
+            .get("/api/articles/invalidId")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
+    test("404 responds when valid id but is non-existent", () => {
+        return request(app)
+            .get("/api/articles/111111")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article 111111 does not exist");
             });
     });
 });
@@ -159,12 +159,12 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
     test("400 responds when valid path to comments but invalid id", () => {
         return request(app)
-        .get("/api/articles/invalidId/comments")
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .get("/api/articles/invalidId/comments")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
     test("404 responds when valid id to comments but is non-existent", () => {
         return request(app)
             .get("/api/articles/222222/comments")
@@ -176,7 +176,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/commments", () => {
-    test("201 returns comment posted after inserting to given article", () => {
+    test("201 returns comment posted to given article", () => {
         const newComment = {
             username: "butter_bridge",
             body: "test body",
@@ -201,129 +201,155 @@ describe("POST /api/articles/:article_id/commments", () => {
     test("400 missing required fields", () => {
         const newComment = {
             username: "butter_bridge",
-            body: null
+            body: null,
         };
         return request(app)
-        .post("/api/articles/3/comments")
-        .send(newComment)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .post("/api/articles/3/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
     test("400 missing required fields", () => {
         const newComment = {
             username: null,
-            body: "test body"
+            body: "test body",
         };
         return request(app)
-        .post("/api/articles/3/comments")
-        .send(newComment)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .post("/api/articles/3/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
     test("400 incorrect fields", () => {
         const newComment = {
             username: 10,
-            body: "test body"
+            body: "test body",
         };
         return request(app)
-        .post("/api/articles/3/comments")
-        .send(newComment)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .post("/api/articles/3/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
     test("400 incorrect fields", () => {
         const newComment = {
             username: "butter_bridge",
-            body: 10
+            body: 10,
         };
         return request(app)
-        .post("/api/articles/3/comments")
-        .send(newComment)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .post("/api/articles/3/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
 });
-
 
 describe("PATCH /api/articles/:article_id", () => {
     test("202 returns updated article", () => {
         const patchId = 1;
         const update = {
-            inc_votes: 1000
+            inc_votes: 1000,
         };
         return request(app)
-        .patch(`/api/articles/${patchId}`)
-        .send(update)
-        .expect(202)
-        .then(({ body }) => {
-            const { article } = body;
-            expect(article.votes).toEqual(1100);
-        })
-    })
+            .patch(`/api/articles/${patchId}`)
+            .send(update)
+            .expect(202)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article.votes).toEqual(1100);
+            });
+    });
     test("202 returns updated article", () => {
         const patchId = 1;
         const update = {
-            inc_votes: -1000
+            inc_votes: -1000,
         };
         return request(app)
-        .patch(`/api/articles/${patchId}`)
-        .send(update)
-        .expect(202)
-        .then(({ body }) => {
-            const { article } = body;
-            expect(article.votes).toEqual(-900);
-        })
-    })
+            .patch(`/api/articles/${patchId}`)
+            .send(update)
+            .expect(202)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article.votes).toEqual(-900);
+            });
+    });
     test("400 missing required fields when request body is null", () => {
         const update = {
-            inc_votes: null
+            inc_votes: null,
         };
         return request(app)
-        .patch("/api/articles/1")
-        .send(update)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
     test("400 missing required fields when request is null", () => {
         const update = null;
         return request(app)
-        .patch("/api/articles/1")
-        .send(update)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
     test("400 incorrect fields of wrong property type", () => {
         const update = {
-            inc_votes: "sausage"
+            inc_votes: "sausage",
         };
         return request(app)
-        .patch("/api/articles/1")
-        .send(update)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
     test("400 incorrect type of request", () => {
         const update = [1000];
         return request(app)
-        .patch("/api/articles/1")
-        .send(update)
-        .expect(400)
-        .then(( { body }) => {
-            expect(body.msg).toBe("invalid input");
-        })
-    })
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204 responds with no content", () => {
+        return request(app)
+            .delete("/api/comments/5")
+            .expect(204)
+            .then(({ body }) => {
+                expect(body).toEqual({});
+            });
+    });
+    test("400 responds when invalid comment id", () => {
+        return request(app)
+            .delete("/api/comments/invalidId")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
+    test("404 responds when comment not found", () => {
+        return request(app)
+            .delete("/api/comments/333333")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("comment 333333 does not exist");
+            });
+    });
 });
