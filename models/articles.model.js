@@ -41,6 +41,14 @@ exports.selectCommentsByArticleId = (article_id) => {
 
 exports.updateArticleVotes = (update, article_id, existingVotes) => {
     const { inc_votes } = update;
+
+    if (typeof inc_votes !== 'number') {
+        return Promise.reject({
+            status: 400,
+            msg: `invalid input`,
+        })
+    }
+
     const newVotesValue = existingVotes + inc_votes;
     const queryStr = "UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;";
 
@@ -49,12 +57,7 @@ exports.updateArticleVotes = (update, article_id, existingVotes) => {
     return db.query(queryStr, queryValues)
     .then(( { rows } ) => {
         const article = rows[0];
-        if (article === undefined) {
-            return Promise.reject({
-                status: 404,
-                msg: `article ${article_id} does not exist`,
-            })
-        }
+        
         return article;
     })
 }

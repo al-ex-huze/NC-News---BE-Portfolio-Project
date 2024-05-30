@@ -36,6 +36,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
 exports.patchArticleVotes = (req, res, next) => {
     const { article_id } = req.params;
+    
     selectArticleById(article_id)
     .then((existingArticle) => {
         const existingVotes = existingArticle.votes;

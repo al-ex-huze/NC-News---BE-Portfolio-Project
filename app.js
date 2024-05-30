@@ -14,7 +14,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
-app.put("/api/articles/:article_id", patchArticleVotes);
+app.patch("/api/articles/:article_id", patchArticleVotes);
 
 app.use(handleCustomErrors);
 app.use(handlePsqlErrors);
