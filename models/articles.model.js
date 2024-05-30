@@ -25,7 +25,7 @@ exports.selectArticles = (validTopics, topic) => {
 
 exports.selectArticleById = (article_id) => {
     const queryStr =
-        "SELECT author, title, article_id, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id = $1;";
+        "SELECT articles.author, title, articles.article_id, articles.body, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) :: INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;";
 
     const queryValue = [article_id];
 
