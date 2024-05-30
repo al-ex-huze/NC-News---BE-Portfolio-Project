@@ -203,7 +203,7 @@ describe("POST /api/articles/:article_id/commments", () => {
             username: "butter_bridge",
             body: "test body",
             votes: 10000,
-            newProperty: "ignore"
+            newProperty: "ignore",
         };
         return request(app)
             .post("/api/articles/3/comments")
@@ -276,7 +276,7 @@ describe("POST /api/articles/:article_id/commments", () => {
     });
     test("400 missing fields", () => {
         const newComment = {
-            username: "butter_bridge"
+            username: "butter_bridge",
         };
         return request(app)
             .post("/api/articles/3/comments")
@@ -386,6 +386,23 @@ describe("DELETE /api/comments/:comment_id", () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe("comment 333333 does not exist");
+            });
+    });
+});
+
+describe("GET /api/users", () => {
+    test("200 returns all users", () => {
+        return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body;                
+                expect(users.length).toBe(4);
+                users.forEach((user) => {
+                    expect(typeof user.username).toBe("string");
+                    expect(typeof user.name).toBe("string");
+                    expect(typeof user.avatar_url).toBe("string");
+                });
             });
     });
 });
