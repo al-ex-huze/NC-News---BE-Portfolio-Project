@@ -135,6 +135,32 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
 });
 
+describe("POST /api/articles/:article_id/commments", () => {
+    test("201 returns comment posted after inserting to given article", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "test body",
+        };
+        return request(app)
+            .post("/api/articles/3/comments")
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(typeof comment.comment_id).toBe("number");
+                expect(typeof comment.votes).toBe("number");
+                expect(typeof comment.created_at).toBe("string");
+                expect(typeof comment.author).toBe("string");
+                expect(typeof comment.body).toBe("string");
+                expect(typeof comment.article_id).toBe("number");
+                expect(comment.author).toEqual("butter_bridge");
+                expect(comment.body).toEqual("test body");
+                expect(comment.article_id).toEqual(3);
+            });
+    });
+});
+
+
 describe("PATCH /api/articles/:article_id", () => {
     test("202 returns updated article", () => {
         const patchId = 1;
