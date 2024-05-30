@@ -4,7 +4,8 @@ exports.selectArticles = () => {
     const queryStr =
         "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) :: INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
 
-    return db.query(queryStr).then(({ rows }) => {
+    return db.query(queryStr)
+    .then(({ rows }) => {
         return rows;
     });
 };
@@ -15,7 +16,8 @@ exports.selectArticleById = (article_id) => {
 
     const queryValue = [article_id];
 
-    return db.query(queryStr, queryValue).then(({ rows }) => {
+    return db.query(queryStr, queryValue)
+    .then(({ rows }) => {
         const article = rows[0];
         if (article === undefined) {
             return Promise.reject({
@@ -33,7 +35,8 @@ exports.selectCommentsByArticleId = (article_id) => {
 
     const queryValue = [article_id];
 
-    return db.query(queryStr, queryValue).then(({ rows }) => {
+    return db.query(queryStr, queryValue)
+    .then(({ rows }) => {
         const comments = rows;
         return comments;
     });
@@ -55,7 +58,8 @@ exports.updateArticleVotes = (update, article_id, existingVotes) => {
 
     const queryValues = [newVotesValue, article_id];
 
-    return db.query(queryStr, queryValues).then(({ rows }) => {
+    return db.query(queryStr, queryValues)
+    .then(({ rows }) => {
         const article = rows[0];
 
         return article;
@@ -63,11 +67,13 @@ exports.updateArticleVotes = (update, article_id, existingVotes) => {
 };
 
 exports.checkArticleExistence = (article_id) => {
-    const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
+    const queryStr = 
+    "SELECT * FROM articles WHERE article_id = $1;";
 
     const queryValue = [article_id];
 
-    return db.query(queryStr, queryValue).then(({ rows }) => {
+    return db.query(queryStr, queryValue)
+    .then(({ rows }) => {
         if (rows.length === 0) {
             return Promise.reject({
                 status: 404,

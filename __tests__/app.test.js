@@ -176,7 +176,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/commments", () => {
-    test("201 returns comment posted after inserting to given article", () => {
+    test("201 returns comment posted to given article", () => {
         const newComment = {
             username: "butter_bridge",
             body: "test body",
@@ -328,7 +328,7 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-    test("204 responds, no content", () => {
+    test("204 responds with no content", () => {
         return request(app)
             .delete("/api/comments/5")
             .expect(204)

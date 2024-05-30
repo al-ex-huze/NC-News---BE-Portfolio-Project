@@ -15,11 +15,17 @@ exports.insertCommentToArticle = (newComment, article_id) => {
 
     const queryValues = [username, body, article_id];
 
-    return db.query(queryStr, queryValues).then(({ rows }) => {
+    return db.query(queryStr, queryValues)
+    .then(({ rows }) => {
         return (comment = rows[0]);
     });
 };
 
 exports.deleteCommentById = (comment_id) => {
-    
-}
+    const queryStr = "DELETE FROM comments WHERE comment_id = $1 RETURNING *;";
+
+    const queryValue = [comment_id];
+
+    return db.query(queryStr, queryValue)
+    .then(() => {});
+};
