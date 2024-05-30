@@ -87,7 +87,6 @@ describe("GET /api/articles", () => {
             .then(({ body }) => {
                 const { articles } = body;
                 articles.forEach((article) => {
-                    console.log(article);
                     expect(article.topic).toBe("mitch");
                 });
             });
