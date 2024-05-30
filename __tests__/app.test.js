@@ -80,6 +80,26 @@ describe("GET /api/articles", () => {
                 });
             });
     });
+    test("200 returns array of articles filtered by topic query", () => {
+        return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                articles.forEach((article) => {
+                    console.log(article);
+                    expect(article.topic).toBe("mitch");
+                });
+            });
+    });
+    test("400 returns invalid topic query", () => {
+        return request(app)
+        .get("/api/articles?topic=invalid_topic")
+        .expect(400)
+        .then(( { body }) => {
+            expect(body.msg).toBe("invalid query");
+        })
+    })
 });
 
 describe("GET /api/articles/:article_id", () => {
