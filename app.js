@@ -40,7 +40,7 @@ app.use(handleCustomErrors);
 app.use(handlePsqlErrors);
 app.use(handleServerErrors);
 app.all("*", (req, res) => {
-    res.status(404).send({ msg: "Not found" });
+    res.status(404).send({ msg: "not found" });
 });
 
 module.exports = app;

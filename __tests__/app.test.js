@@ -27,7 +27,7 @@ describe("GET /api", () => {
             .get("/nonValidRoute")
             .expect(404)
             .then(({ body }) => {
-                expect(body.msg).toBe("Not found");
+                expect(body.msg).toBe("not found");
             });
     });
 });
@@ -125,7 +125,6 @@ describe("GET /api/articles/:article_id", () => {
             .expect(200)
             .then(({ body }) => {
                 const { article } = body;
-                console.log(article)
                 expect(typeof article.comment_count).toBe("number");
             });
     });
