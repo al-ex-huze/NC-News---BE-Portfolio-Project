@@ -198,6 +198,30 @@ describe("POST /api/articles/:article_id/commments", () => {
                 expect(comment.article_id).toEqual(3);
             });
     });
+    test("201 successful post, additional properties ignored", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "test body",
+            votes: 10000,
+            newProperty: "ignore"
+        };
+        return request(app)
+            .post("/api/articles/3/comments")
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(typeof comment.comment_id).toBe("number");
+                expect(typeof comment.votes).toBe("number");
+                expect(typeof comment.created_at).toBe("string");
+                expect(typeof comment.author).toBe("string");
+                expect(typeof comment.body).toBe("string");
+                expect(typeof comment.article_id).toBe("number");
+                expect(comment.author).toEqual("butter_bridge");
+                expect(comment.body).toEqual("test body");
+                expect(comment.article_id).toEqual(3);
+            });
+    });
     test("400 missing required fields", () => {
         const newComment = {
             username: "butter_bridge",
@@ -241,6 +265,18 @@ describe("POST /api/articles/:article_id/commments", () => {
         const newComment = {
             username: "butter_bridge",
             body: 10,
+        };
+        return request(app)
+            .post("/api/articles/3/comments")
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid input");
+            });
+    });
+    test("400 missing fields", () => {
+        const newComment = {
+            username: "butter_bridge"
         };
         return request(app)
             .post("/api/articles/3/comments")
