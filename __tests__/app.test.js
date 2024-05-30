@@ -389,3 +389,9 @@ describe("DELETE /api/comments/:comment_id", () => {
             });
     });
 });
+
+describe("GET /api/users", () => {
+    test("200 returns all users", () => {
+
+    });
+});
