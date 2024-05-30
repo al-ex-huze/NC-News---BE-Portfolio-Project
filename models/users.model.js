@@ -1,7 +1,8 @@
 const db = require("../db/connection.js");
 
 exports.selectUsers = () => {
-    return db.query()
+    const queryStr = "SELECT * FROM users;"
+    return db.query(queryStr)
     .then(( { rows } ) => {
         return rows;
     });
