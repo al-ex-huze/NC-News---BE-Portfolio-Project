@@ -391,7 +391,7 @@ describe("POST /api/articles/:article_id/commments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-    test("202 returns updated article", () => {
+    test("200 returns updated article", () => {
         const patchId = 1;
         const update = {
             inc_votes: 1000,
@@ -399,13 +399,21 @@ describe("PATCH /api/articles/:article_id", () => {
         return request(app)
             .patch(`/api/articles/${patchId}`)
             .send(update)
-            .expect(202)
+            .expect(200)
             .then(({ body }) => {
                 const { article } = body;
                 expect(article.votes).toEqual(1100);
+                expect(typeof article.author).toBe("string");
+                expect(typeof article.title).toBe("string");
+                expect(typeof article.article_id).toBe("number");
+                expect(typeof article.body).toBe("string");
+                expect(typeof article.topic).toBe("string");
+                expect(typeof article.created_at).toBe("string");
+                expect(typeof article.votes).toBe("number");
+                expect(typeof article.article_img_url).toBe("string");
             });
     });
-    test("202 returns updated article", () => {
+    test("200 returns updated article", () => {
         const patchId = 1;
         const update = {
             inc_votes: -1000,
@@ -413,7 +421,7 @@ describe("PATCH /api/articles/:article_id", () => {
         return request(app)
             .patch(`/api/articles/${patchId}`)
             .send(update)
-            .expect(202)
+            .expect(200)
             .then(({ body }) => {
                 const { article } = body;
                 expect(article.votes).toEqual(-900);

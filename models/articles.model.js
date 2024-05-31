@@ -78,7 +78,7 @@ exports.selectCommentsByArticleId = (article_id) => {
     });
 };
 
-exports.updateArticleVotes = (update, article_id, existingVotes) => {
+exports.updateArticleVotes = (update, article_id) => {
     const { inc_votes } = update;
 
     if (typeof inc_votes !== "number") {
@@ -88,11 +88,10 @@ exports.updateArticleVotes = (update, article_id, existingVotes) => {
         });
     }
 
-    const newVotesValue = existingVotes + inc_votes;
     const queryStr =
-        "UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;";
+        "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;";
 
-    const queryValues = [newVotesValue, article_id];
+    const queryValues = [inc_votes, article_id];
 
     return db.query(queryStr, queryValues)
     .then(({ rows }) => {
