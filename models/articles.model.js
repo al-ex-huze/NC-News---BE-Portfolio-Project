@@ -81,13 +81,6 @@ exports.selectCommentsByArticleId = (article_id) => {
 exports.updateArticleVotes = (update, article_id) => {
     const { inc_votes } = update;
 
-    if (typeof inc_votes !== "number") {
-        return Promise.reject({
-            status: 400,
-            msg: `invalid input`,
-        });
-    }
-
     const queryStr =
         "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;";
 
@@ -96,7 +89,7 @@ exports.updateArticleVotes = (update, article_id) => {
     return db.query(queryStr, queryValues)
     .then(({ rows }) => {
         const article = rows[0];
-
+        
         return article;
     });
 };

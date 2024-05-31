@@ -5,6 +5,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
+    // console.log(err)
     if (err.code === "23503") {
         res.status(400).send({ msg: "invalid input" });
     } else if (err.code === "23502") {
