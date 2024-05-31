@@ -4,6 +4,7 @@ const app = express();
 app.use(express.json());
 
 const { getEndpoints } = require("./controllers/api.controller.js");
+const { getUsers } = require("./controllers/users.controller.js");
 const { getTopics } = require("./controllers/topics.controller.js");
 
 const {
@@ -24,9 +25,8 @@ const {
     handleServerErrors,
 } = require("./errors/app.errors.js");
 
-const { getUsers } = require("./controllers/users.controller.js");
-
 app.get("/api", getEndpoints);
+app.get("/api/users", getUsers);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
@@ -34,7 +34,6 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", addCommmentToArticle);
 app.patch("/api/articles/:article_id", patchArticleVotes);
 app.delete("/api/comments/:comment_id", removeCommentById);
-app.get("/api/users", getUsers);
 
 app.use(handleCustomErrors);
 app.use(handlePsqlErrors);

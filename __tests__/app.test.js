@@ -207,7 +207,7 @@ describe("POST /api/articles/:article_id/commments", () => {
     test("201 returns comment posted to given article", () => {
         const newComment = {
             username: "butter_bridge",
-            body: "test body",
+            body: "test response body",
         };
         return request(app)
             .post("/api/articles/3/comments")
@@ -222,7 +222,7 @@ describe("POST /api/articles/:article_id/commments", () => {
                 expect(typeof comment.body).toBe("string");
                 expect(typeof comment.article_id).toBe("number");
                 expect(comment.author).toEqual("butter_bridge");
-                expect(comment.body).toEqual("test body");
+                expect(comment.body).toEqual("test response body");
                 expect(comment.article_id).toEqual(3);
             });
     });

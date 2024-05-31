@@ -1,6 +1,6 @@
 {
   "name": "be-nc-news",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "bc-nc-news",
   "main": "listen.js",
   "scripts": {
@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/northcoders/be-nc-news.git"
+    "url": "git+https://github.com/al-ex-huze/NC-News---BE-Portfolio-Project.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/northcoders/be-nc-news/issues"
+    "url": "https://github.com/al-ex-huze/NC-News---BE-Portfolio-Project.git/issues"
   },
-  "homepage": "https://github.com/northcoders/be-nc-news#readme",
+  "homepage": "https://github.com/al-ex-huze/NC-News---BE-Portfolio-Project.git#readme",
   "devDependencies": {
     "husky": "^8.0.2",
     "jest": "^27.5.1",

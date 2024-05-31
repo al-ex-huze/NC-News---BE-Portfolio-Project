@@ -9,7 +9,8 @@ exports.addCommmentToArticle = (req, res, next) => {
 
     insertCommentToArticle(req.body, article_id)
         .then((comment) => {
-            res.status(201).send({ comment });
+            res.status(201);
+            res.send({ comment });
         })
         .catch(next);
 };
