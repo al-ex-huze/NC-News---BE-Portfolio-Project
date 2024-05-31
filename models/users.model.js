@@ -17,7 +17,7 @@ exports.selectUserByUsername = (username) => {
         if (user === undefined) {
             return Promise.reject({
                 status: 404,
-                msg: `${username} does not exist`,
+                msg: `user ${username} does not exist`,
             });
         }
         return user;

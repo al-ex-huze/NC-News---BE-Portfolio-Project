@@ -109,7 +109,7 @@ describe("GET /api/articles", () => {
                 expect(articles).toEqual([]);
             });
     });
-    test("200 returns sorted by query... author", () => {
+    test("200 returns sorted by query...author", () => {
         return request(app)
             .get("/api/articles?sort_by=author")
             .expect(200)
@@ -537,6 +537,14 @@ describe("GET /api/users/:username", () => {
                 expect(typeof user.username).toBe("string");
                 expect(typeof user.name).toBe("string");
                 expect(typeof user.avatar_url).toBe("string");
+            });
+    });
+    test("404 responds when user does not exist", () => {
+        return request(app)
+            .get("/api/users/al")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("user al does not exist");
             });
     });
 });
