@@ -106,7 +106,7 @@ describe("GET /api/articles", () => {
             .expect(200)
             .then(({ body }) => {
                 const { articles } = body;
-                expect(articles).toEqual([]);                
+                expect(articles).toEqual([]);
             });
     });
     test("200 returns sorted by query... author", () => {

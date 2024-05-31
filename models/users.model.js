@@ -7,3 +7,7 @@ exports.selectUsers = () => {
         return rows;
     });
 };
+
+exports.selectUserByUsername = (username) => {
+    console.log(username)
+}
