@@ -100,6 +100,15 @@ describe("GET /api/articles", () => {
                 });
             });
     });
+    test("200 returns empty array for valid topic with no articles", () => {
+        return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toEqual([]);                
+            });
+    });
     test("200 returns sorted by query... author", () => {
         return request(app)
             .get("/api/articles?sort_by=author")
@@ -207,7 +216,7 @@ describe("GET /api/articles/:article_id", () => {
             .get("/api/articles/invalidId")
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("22P02 - invalid input");
             });
     });
     test("404 responds when valid id but is non-existent", () => {
@@ -264,7 +273,7 @@ describe("GET /api/articles/:article_id/comments", () => {
             .get("/api/articles/invalidId/comments")
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("22P02 - invalid input");
             });
     });
     test("404 responds when valid id to comments but is non-existent", () => {
@@ -347,10 +356,10 @@ describe("POST /api/articles/:article_id/commments", () => {
             .send(newComment)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("23502 - missing required key");
             });
     });
-    test("400 incorrect fields", () => {
+    test("400 incorrect input fields", () => {
         const newComment = {
             username: 10,
             body: "test body",
@@ -360,7 +369,7 @@ describe("POST /api/articles/:article_id/commments", () => {
             .send(newComment)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("23503 - missing required key");
             });
     });
     test("400 incorrect fields", () => {
@@ -436,7 +445,7 @@ describe("PATCH /api/articles/:article_id", () => {
             .send(update)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("23502 - missing required key");
             });
     });
     test("400 missing required fields when request is null", () => {
@@ -446,7 +455,7 @@ describe("PATCH /api/articles/:article_id", () => {
             .send(update)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("23502 - missing required key");
             });
     });
     test("400 incorrect fields of wrong property type", () => {
@@ -458,7 +467,7 @@ describe("PATCH /api/articles/:article_id", () => {
             .send(update)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("22P02 - invalid input");
             });
     });
     test("400 incorrect type of request", () => {
@@ -468,7 +477,7 @@ describe("PATCH /api/articles/:article_id", () => {
             .send(update)
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("23502 - missing required key");
             });
     });
 });
@@ -487,7 +496,7 @@ describe("DELETE /api/comments/:comment_id", () => {
             .delete("/api/comments/invalidId")
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe("invalid input");
+                expect(body.msg).toBe("22P02 - invalid input");
             });
     });
     test("404 responds when comment not found", () => {
