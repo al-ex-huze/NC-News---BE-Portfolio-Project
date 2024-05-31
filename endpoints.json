@@ -12,7 +12,13 @@
     "GET /api/articles": {
         "description": "serves an array of all articles sorted by descending date order",
         "format": "JSON",
-        "queries": ["topic"],
+        "queries": [
+            { "topic": "filter by topic" },
+            {
+                "sort_by": "sort by the following columns: author, title, article_id, topic, created_at, votes, comment_count"
+            },
+            { "order": "order sort_by by asc or desc" }
+        ],
         "exampleResponse": {
             "articles": [
                 {

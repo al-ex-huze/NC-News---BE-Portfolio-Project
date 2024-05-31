@@ -69,7 +69,7 @@ describe("GET /api/articles", () => {
                 });
             });
     });
-    test("200 returns sorted by descending date order", () => {
+    test("200 returns sorted by descending date order as default", () => {
         return request(app)
             .get("/api/articles")
             .expect(200)
@@ -78,6 +78,15 @@ describe("GET /api/articles", () => {
                 expect(articles).toBeSortedBy("created_at", {
                     descending: true,
                 });
+            });
+    });
+    test("200 returns sorted by ascending date order query", () => {
+        return request(app)
+            .get("/api/articles?order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy("created_at");
             });
     });
     test("200 returns array of articles filtered by topic query", () => {
@@ -91,12 +100,77 @@ describe("GET /api/articles", () => {
                 });
             });
     });
+    test("200 returns sorted by query... author", () => {
+        return request(app)
+            .get("/api/articles?sort_by=author")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy("author");
+            });
+    });
+    test("200 returns sorted by query...comment_count", () => {
+        return request(app)
+            .get("/api/articles?sort_by=comment_count")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy("comment_count");
+            });
+    });
+    test("200 returns sorted by query...comment_count desc", () => {
+        return request(app)
+            .get("/api/articles?sort_by=comment_count&order=desc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy("comment_count", {
+                    descending: true,
+                });
+            });
+    });
+    test("200 returns sorted by query... votes", () => {
+        return request(app)
+            .get("/api/articles?sort_by=votes")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy("votes");
+            });
+    });
+    test("200 returns sorted by query...votes desc", () => {
+        return request(app)
+            .get("/api/articles?sort_by=votes&order=desc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles).toBeSortedBy("votes", {
+                    descending: true,
+                });
+            });
+    });
     test("400 returns invalid topic query", () => {
         return request(app)
             .get("/api/articles?topic=invalid_topic")
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("invalid query");
+            });
+    });
+    test("400 valid path but invalid sort_by query", () => {
+        return request(app)
+            .get("/api/articles?sort_by=sausage")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid query: sort_by");
+            });
+    });
+    test("400 valid path but invalid order query", () => {
+        return request(app)
+            .get("/api/articles?order=sideways")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid query: order");
             });
     });
 });

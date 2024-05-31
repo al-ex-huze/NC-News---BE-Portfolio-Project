@@ -1,8 +1,19 @@
 const db = require("../db/connection.js");
 
-exports.selectArticles = (validTopics, topic) => {
+exports.selectArticles = (validTopics, topic, sort_by, order) => {
+
+    const validSortBy = ["author", "title", "article_id", "topic", "created_at", "votes", "comment_count"];
+
+    if (sort_by && !validSortBy.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: "invalid query: sort_by"});
+    }
+
+    if (order && !["asc", "desc"].includes(order)) {
+        return Promise.reject({ status: 400, msg: "invalid query: order"});
+    }
+
     if (topic && !validTopics.includes(topic)) {
-        return Promise.reject({ status: 400, msg: "invalid query" });
+        return Promise.reject({ status: 400, msg: "invalid query" }); 
     }
 
     const queryValues = [];
@@ -15,8 +26,20 @@ exports.selectArticles = (validTopics, topic) => {
         queryValues.push(topic);
     }
 
-    queryStr += " GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+    queryStr += " GROUP BY articles.article_id";
     
+    if (sort_by && order) {
+        queryStr += ` ORDER BY ${sort_by} ${order}`;
+    } else if (sort_by) {
+        queryStr += ` ORDER BY ${sort_by}`;
+    } else if (order) {
+        queryStr += ` ORDER BY articles.created_at ${order}`;
+    } else {
+        queryStr += " ORDER BY articles.created_at DESC";
+    }
+    
+    queryStr += " ;";
+
     return db.query(queryStr, queryValues)
     .then(({ rows }) => {
         return rows;
