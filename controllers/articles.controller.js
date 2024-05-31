@@ -38,7 +38,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     const promises = [selectCommentsByArticleId(article_id)];
 
     if (article_id) {
-        promises.push(checkArticleExistence(article_id));
+        promises.push(selectArticleById(article_id));
     }
 
     Promise.all(promises)
