@@ -525,3 +525,18 @@ describe("GET /api/users", () => {
             });
     });
 });
+
+describe("GET /api/users/:username", () => {
+    test("200 returns user matching username", () => {
+        return request(app)
+            .get("/api/users/rogersop")
+            .expect(200)
+            .then(({ body }) => {
+                const { user } = body;
+                expect(user.username).toBe("rogersop");
+                expect(typeof user.username).toBe("string");
+                expect(typeof user.name).toBe("string");
+                expect(typeof user.avatar_url).toBe("string");
+            });
+    });
+});
