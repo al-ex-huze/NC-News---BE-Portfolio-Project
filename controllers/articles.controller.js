@@ -8,14 +8,14 @@ const {
 } = require("../models/articles.model.js");
 
 exports.getArticles = (req, res, next) => {
-    const { topic } = req.query;
+    const { topic, sort_by, order } = req.query;
     selectTopics()
         .then((topics) => {
             const validTopics = [];
             topics.forEach((topic) => {
                 validTopics.push(topic.slug);
             })
-            return selectArticles(validTopics, topic);
+            return selectArticles(validTopics, topic, sort_by, order);
         })
         .then((articles) => {
             res.status(200).send({ articles });

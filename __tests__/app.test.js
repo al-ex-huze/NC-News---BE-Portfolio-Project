@@ -69,7 +69,7 @@ describe("GET /api/articles", () => {
                 });
             });
     });
-    test("200 returns sorted by descending date order", () => {
+    test("200 returns sorted by descending date order as default", () => {
         return request(app)
             .get("/api/articles")
             .expect(200)
@@ -80,6 +80,7 @@ describe("GET /api/articles", () => {
                 });
             });
     });
+    
     test("200 returns array of articles filtered by topic query", () => {
         return request(app)
             .get("/api/articles?topic=mitch")
@@ -91,12 +92,29 @@ describe("GET /api/articles", () => {
                 });
             });
     });
+    
     test("400 returns invalid topic query", () => {
         return request(app)
             .get("/api/articles?topic=invalid_topic")
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("invalid query");
+            });
+    });
+    test("400 valid path but invalid sort_by query", () => {
+        return request(app)
+            .get("/api/articles?sort_by=sausage")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid query: sort_by");
+            });
+    });
+    test("400 valid path but invalid order query", () => {
+        return request(app)
+            .get("/api/articles?order=sideways")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("invalid query: order");
             });
     });
 });

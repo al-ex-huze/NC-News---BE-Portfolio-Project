@@ -1,6 +1,17 @@
 const db = require("../db/connection.js");
 
-exports.selectArticles = (validTopics, topic) => {
+exports.selectArticles = (validTopics, topic, sort_by, order) => {
+
+    const validSortBy = ["author"];
+
+    if (sort_by && !validSortBy.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: "invalid query: sort_by"});
+    }
+
+    if (order && !["asc", "desc"].includes(order)) {
+        return Promise.reject({ status: 400, msg: "invalid query: order"});
+    }
+
     if (topic && !validTopics.includes(topic)) {
         return Promise.reject({ status: 400, msg: "invalid query" });
     }
