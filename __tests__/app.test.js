@@ -106,10 +106,10 @@ describe("GET /api/articles", () => {
             .expect(200)
             .then(({ body }) => {
                 const { articles } = body;
-                expect(articles).toEqual([]);                
+                expect(articles).toEqual([]);
             });
     });
-    test("200 returns sorted by query... author", () => {
+    test("200 returns sorted by query...author", () => {
         return request(app)
             .get("/api/articles?sort_by=author")
             .expect(200)
@@ -522,6 +522,29 @@ describe("GET /api/users", () => {
                     expect(typeof user.name).toBe("string");
                     expect(typeof user.avatar_url).toBe("string");
                 });
+            });
+    });
+});
+
+describe("GET /api/users/:username", () => {
+    test("200 returns user matching username", () => {
+        return request(app)
+            .get("/api/users/rogersop")
+            .expect(200)
+            .then(({ body }) => {
+                const { user } = body;
+                expect(user.username).toBe("rogersop");
+                expect(typeof user.username).toBe("string");
+                expect(typeof user.name).toBe("string");
+                expect(typeof user.avatar_url).toBe("string");
+            });
+    });
+    test("404 responds when user does not exist", () => {
+        return request(app)
+            .get("/api/users/al")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("user al does not exist");
             });
     });
 });

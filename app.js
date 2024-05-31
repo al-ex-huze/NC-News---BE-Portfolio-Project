@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 
 const { getEndpoints } = require("./controllers/api.controller.js");
-const { getUsers } = require("./controllers/users.controller.js");
+const { getUsers, getUserByUsername } = require("./controllers/users.controller.js");
 const { getTopics } = require("./controllers/topics.controller.js");
 
 const {
@@ -27,6 +27,7 @@ const {
 
 app.get("/api", getEndpoints);
 app.get("/api/users", getUsers);
+app.get("/api/users/:username", getUserByUsername);
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
