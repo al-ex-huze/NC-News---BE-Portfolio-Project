@@ -548,3 +548,84 @@ describe("GET /api/users/:username", () => {
             });
     });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+    test("200 returns updated comment", () => {
+        const patchId = 1;
+        const update = {
+            inc_votes: 1,
+        };
+        return request(app)
+            .patch(`/api/comments/${patchId}`)
+            .send(update)
+            .expect(200)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(comment.votes).toEqual(1);
+                expect(typeof comment.comment_id).toBe("number");
+                expect(typeof comment.body).toBe("string");
+                expect(typeof comment.votes).toBe("number");
+                expect(typeof comment.author).toBe("string");
+                expect(typeof comment.article_id).toBe("number");
+                expect(typeof comment.created_at).toBe("string");
+            });
+    });
+    test("200 returns updated comment", () => {
+        const patchId = 1;
+        const update = {
+            inc_votes: -1,
+        };
+        return request(app)
+            .patch(`/api/comments/${patchId}`)
+            .send(update)
+            .expect(200)
+            .then(({ body }) => {
+                const { comment } = body;
+                expect(comment.votes).toEqual(-1);
+            });
+    });
+    test("400 missing required fields when request body is null", () => {
+        const update = {
+            inc_votes: null,
+        };
+        return request(app)
+            .patch("/api/comments/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+    test("400 missing required fields when request is null", () => {
+        const update = null;
+        return request(app)
+            .patch("/api/comments/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+    test("400 incorrect fields of wrong property type", () => {
+        const update = {
+            inc_votes: "sausage",
+        };
+        return request(app)
+            .patch("/api/comments/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("400 incorrect type of request", () => {
+        const update = [1000];
+        return request(app)
+            .patch("/api/comments/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+});
