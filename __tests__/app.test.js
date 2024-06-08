@@ -32,6 +32,46 @@ describe("GET /api", () => {
     });
 });
 
+describe("GET /api/users", () => {
+    test("200 returns all users", () => {
+        return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body;
+                expect(users.length).toBe(4);
+                users.forEach((user) => {
+                    expect(typeof user.username).toBe("string");
+                    expect(typeof user.name).toBe("string");
+                    expect(typeof user.avatar_url).toBe("string");
+                });
+            });
+    });
+});
+
+describe("GET /api/users/:username", () => {
+    test("200 returns user matching username", () => {
+        return request(app)
+            .get("/api/users/rogersop")
+            .expect(200)
+            .then(({ body }) => {
+                const { user } = body;
+                expect(user.username).toBe("rogersop");
+                expect(typeof user.username).toBe("string");
+                expect(typeof user.name).toBe("string");
+                expect(typeof user.avatar_url).toBe("string");
+            });
+    });
+    test("404 responds when user does not exist", () => {
+        return request(app)
+            .get("/api/users/al")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("user al does not exist");
+            });
+    });
+});
+
 describe("GET /api/topics", () => {
     test("200 returns an array of topic objects", () => {
         return request(app)
@@ -482,73 +522,6 @@ describe("PATCH /api/articles/:article_id", () => {
     });
 });
 
-describe("DELETE /api/comments/:comment_id", () => {
-    test("204 responds with no content", () => {
-        return request(app)
-            .delete("/api/comments/5")
-            .expect(204)
-            .then(({ body }) => {
-                expect(body).toEqual({});
-            });
-    });
-    test("400 responds when invalid comment id", () => {
-        return request(app)
-            .delete("/api/comments/invalidId")
-            .expect(400)
-            .then(({ body }) => {
-                expect(body.msg).toBe("22P02 - invalid input");
-            });
-    });
-    test("404 responds when comment not found", () => {
-        return request(app)
-            .delete("/api/comments/333333")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("comment 333333 does not exist");
-            });
-    });
-});
-
-describe("GET /api/users", () => {
-    test("200 returns all users", () => {
-        return request(app)
-            .get("/api/users")
-            .expect(200)
-            .then(({ body }) => {
-                const { users } = body;
-                expect(users.length).toBe(4);
-                users.forEach((user) => {
-                    expect(typeof user.username).toBe("string");
-                    expect(typeof user.name).toBe("string");
-                    expect(typeof user.avatar_url).toBe("string");
-                });
-            });
-    });
-});
-
-describe("GET /api/users/:username", () => {
-    test("200 returns user matching username", () => {
-        return request(app)
-            .get("/api/users/rogersop")
-            .expect(200)
-            .then(({ body }) => {
-                const { user } = body;
-                expect(user.username).toBe("rogersop");
-                expect(typeof user.username).toBe("string");
-                expect(typeof user.name).toBe("string");
-                expect(typeof user.avatar_url).toBe("string");
-            });
-    });
-    test("404 responds when user does not exist", () => {
-        return request(app)
-            .get("/api/users/al")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("user al does not exist");
-            });
-    });
-});
-
 describe("PATCH /api/comments/:comment_id", () => {
     test("200 returns updated comment", () => {
         const patchId = 1;
@@ -626,6 +599,33 @@ describe("PATCH /api/comments/:comment_id", () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204 responds with no content", () => {
+        return request(app)
+            .delete("/api/comments/5")
+            .expect(204)
+            .then(({ body }) => {
+                expect(body).toEqual({});
+            });
+    });
+    test("400 responds when invalid comment id", () => {
+        return request(app)
+            .delete("/api/comments/invalidId")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("404 responds when comment not found", () => {
+        return request(app)
+            .delete("/api/comments/333333")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("comment 333333 does not exist");
             });
     });
 });

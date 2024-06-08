@@ -6,27 +6,25 @@
         "description": "serves an array of all topics",
         "queries": [],
         "exampleResponse": {
-            "topics": 
-            [
-                { 
+            "topics": [
+                {
                     "slug": "football",
-                "description": "Footie!" 
+                    "description": "Footie!"
                 }
             ]
         }
     },
     "GET /api/articles": {
         "description": "serves an array of all articles sorted by descending date order by default and allows filtering by a valid topic query as well as taking queries for sorting by all columns (except IMG URL) by ascending or descending order",
-        "format": "JSON",
         "queries": [
-            { 
-                "topic": "filter by topic" 
+            {
+                "topic": "filter by topic"
             },
             {
                 "sort_by": "sort by the following columns: author, title, article_id, topic, created_at, votes, comment_count"
             },
             {
-                "order": "order sort_by by asc or desc" 
+                "order": "order sort_by by asc or desc"
             }
         ],
         "exampleResponse": {
@@ -46,7 +44,6 @@
     },
     "GET /api/articles/:article_id": {
         "description": "serves up a json object of article with corresponding input",
-        "format": "JSON",
         "queries": [],
         "exampleResponse": {
             "author": "butter_bridge",
@@ -62,7 +59,6 @@
     },
     "GET /api/articles/:article_id/comments": {
         "description": "serves an array of all comments for the given article, sorted by descending date order",
-        "format": "JSON",
         "queries": [],
         "exampleResponse": {
             "comments": [
@@ -79,7 +75,6 @@
     },
     "POST /api/articles/:article_id/comment": {
         "description": "posts a comment, of username and body, to the specified article and returns the full comment object",
-        "format": "JSON",
         "queries": [],
         "exampleResponse": {
             "comment": {
@@ -92,9 +87,8 @@
             }
         }
     },
-    "PUT /api/articles/:article_id": {
+    "PATCH /api/articles/:article_id": {
         "description": "updates vote according to input body, returning an object of the updated article",
-        "format": "JSON",
         "queries": [],
         "exampleResponse": {
             "article": {
@@ -111,13 +105,11 @@
     },
     "DELETE /api/comments/:comment_id": {
         "description": "deletes comment, returning no content",
-        "format": "JSON",
         "queries": [],
         "exampleResponse": {}
     },
     "GET /api/users": {
         "description": "returns an array of all users",
-        "format": "JSON",
         "queries": [],
         "exampleResponse": {
             "users": [
@@ -131,14 +123,26 @@
     },
     "GET /api/users/:username": {
         "description": "returns user object of matching username",
-        "format": "JSON",
         "queries": [],
         "exampleResponse": {
-            "users":
-            {
+            "users": {
                 "username": "butter_bridge",
                 "name": "jonny",
                 "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+            }
+        }
+    },
+    "PATCH /api/comments/:commment_id": {
+        "description": "updates vote according to input body, returning an object of the updated article",
+        "queries": [],
+        "exampleResponse": {
+            "comment": {
+                "comment_id": 1,
+                "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                "article_id": 9,
+                "author": "butter_bridge",
+                "votes": -1,
+                "created_at": "2020-04-06T12:17:00.000Z"
             }
         }
     }
