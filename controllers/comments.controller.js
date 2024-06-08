@@ -1,7 +1,7 @@
 const {
     insertCommentToArticle,
     deleteCommentById,
-    checkCommentExistence,
+    updateCommentVotes,
 } = require("../models/comments.model.js");
 
 exports.addCommmentToArticle = (req, res, next) => {
@@ -21,6 +21,16 @@ exports.removeCommentById = (req, res, next) => {
     deleteCommentById(comment_id)
         .then(() => {
             res.status(204).send();
+        })
+        .catch(next);
+};
+
+exports.patchCommentVotes = (req, res, next) => {
+    const { comment_id } = req.params;
+
+    updateCommentVotes(req.body, comment_id)
+        .then((comment) => {
+            res.status(200).send({ comment });
         })
         .catch(next);
 };

@@ -3,7 +3,6 @@ const {
     selectArticles,
     selectArticleById,
     selectCommentsByArticleId,
-    checkArticleExistence,
     updateArticleVotes,
 } = require("../models/articles.model.js");
 

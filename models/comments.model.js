@@ -34,3 +34,18 @@ exports.deleteCommentById = (comment_id) => {
         }
     });
 };
+
+exports.updateCommentVotes = (update, comment_id) => {
+    const { inc_votes } = update;
+
+    const queryStr =
+        "UPDATE comments SET votes = $1 WHERE comment_id = $2 RETURNING *;";
+
+    const queryValues = [inc_votes, comment_id];
+
+    return db.query(queryStr, queryValues).then(({ rows }) => {
+        const comment = rows[0];
+
+        return comment;
+    });
+};
