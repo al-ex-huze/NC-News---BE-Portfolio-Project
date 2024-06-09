@@ -17,7 +17,7 @@ exports.insertCommentToArticle = (newComment, article_id) => {
 
     return db.query(queryStr, queryValues).then(({ rows }) => {
         return (comment = rows[0]);
-    });
+    }); 
 };
 
 exports.deleteCommentById = (comment_id) => {

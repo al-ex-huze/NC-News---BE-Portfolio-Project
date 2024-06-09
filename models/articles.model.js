@@ -1,19 +1,26 @@
 const db = require("../db/connection.js");
 
 exports.selectArticles = (validTopics, topic, sort_by, order) => {
-
-    const validSortBy = ["author", "title", "article_id", "topic", "created_at", "votes", "comment_count"];
+    const validSortBy = [
+        "author",
+        "title",
+        "article_id",
+        "topic",
+        "created_at",
+        "votes",
+        "comment_count",
+    ];
 
     if (sort_by && !validSortBy.includes(sort_by)) {
-        return Promise.reject({ status: 400, msg: "invalid query: sort_by"});
+        return Promise.reject({ status: 400, msg: "invalid query: sort_by" });
     }
 
     if (order && !["asc", "desc"].includes(order)) {
-        return Promise.reject({ status: 400, msg: "invalid query: order"});
+        return Promise.reject({ status: 400, msg: "invalid query: order" });
     }
 
     if (topic && !validTopics.includes(topic)) {
-        return Promise.reject({ status: 400, msg: "invalid query" }); 
+        return Promise.reject({ status: 400, msg: "invalid query" });
     }
 
     const queryValues = [];
@@ -27,7 +34,7 @@ exports.selectArticles = (validTopics, topic, sort_by, order) => {
     }
 
     queryStr += " GROUP BY articles.article_id";
-    
+
     if (sort_by && order) {
         queryStr += ` ORDER BY ${sort_by} ${order}`;
     } else if (sort_by) {
@@ -37,11 +44,10 @@ exports.selectArticles = (validTopics, topic, sort_by, order) => {
     } else {
         queryStr += " ORDER BY articles.created_at DESC";
     }
-    
+
     queryStr += " ;";
 
-    return db.query(queryStr, queryValues)
-    .then(({ rows }) => {
+    return db.query(queryStr, queryValues).then(({ rows }) => {
         return rows;
     });
 };
@@ -52,8 +58,7 @@ exports.selectArticleById = (article_id) => {
 
     const queryValue = [article_id];
 
-    return db.query(queryStr, queryValue)
-    .then(({ rows }) => {
+    return db.query(queryStr, queryValue).then(({ rows }) => {
         const article = rows[0];
         if (article === undefined) {
             return Promise.reject({
@@ -71,8 +76,7 @@ exports.selectCommentsByArticleId = (article_id) => {
 
     const queryValue = [article_id];
 
-    return db.query(queryStr, queryValue)
-    .then(({ rows }) => {
+    return db.query(queryStr, queryValue).then(({ rows }) => {
         const comments = rows;
         return comments;
     });
@@ -86,10 +90,59 @@ exports.updateArticleVotes = (update, article_id) => {
 
     const queryValues = [inc_votes, article_id];
 
-    return db.query(queryStr, queryValues)
-    .then(({ rows }) => {
+    return db.query(queryStr, queryValues).then(({ rows }) => {
         const article = rows[0];
 
         return article;
+    });
+};
+
+exports.insertArticle = (newArticle) => {
+    const { author, title, body, topic, article_img_url } = newArticle;
+    
+    const checkAuthorQueryStr =
+        "SELECT username FROM users WHERE EXISTS (SELECT username FROM users WHERE username = $1);";
+
+    const checkTopicQueryStr =
+        "SELECT slug FROM topics WHERE EXISTS (SELECT slug FROM topics WHERE slug = $1);";
+
+    let queryStr = "";
+
+    const queryValues = [];
+
+    if (article_img_url === null || article_img_url === undefined) {
+        queryValues.push(author, title, body, topic);
+        queryStr =
+        "INSERT INTO articles (author, title, body, topic) VALUES ($1, $2, $3, $4) RETURNING article_id;";
+    } else {
+        queryValues.push(author, title, body, topic, article_img_url);
+        queryStr =
+        "INSERT INTO articles (author, title, body, topic, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING article_id;";
+    }
+
+    return db.query(checkAuthorQueryStr, [author]).then((isAuthorValid) => {
+        if (isAuthorValid.rowCount === 0) {
+            return Promise.reject({
+                status: 404,
+                msg: `${author} user does not exist`,
+            });
+        }
+        return db
+            .query(checkTopicQueryStr, [topic])
+            .then((isTopicValid) => {
+                if (isTopicValid.rowCount === 0) {
+                    return Promise.reject({
+                        status: 404,
+                        msg: `${topic} topic does not exist`,
+                    });
+                }
+
+                return db.query(queryStr, queryValues);
+            })
+            .then(({ rows }) => {
+                const article = rows[0];
+                const { article_id } = article;
+                return article_id;
+            });
     });
 };
