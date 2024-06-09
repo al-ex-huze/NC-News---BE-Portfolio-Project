@@ -224,6 +224,256 @@ describe("GET /api/articles", () => {
     });
 });
 
+describe("POST /api/articles", () => {
+    test("201 returns newly created article", () => {
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Test Title - New Article",
+            body: "Test body - one, two, three",
+            topic: "mitch",
+            article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(201)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(typeof article.author).toBe("string");
+                expect(typeof article.title).toBe("string");
+                expect(typeof article.article_id).toBe("number");
+                expect(typeof article.body).toBe("string");
+                expect(typeof article.topic).toBe("string");
+                expect(typeof article.created_at).toBe("string");
+                expect(typeof article.votes).toBe("number");
+                expect(typeof article.article_img_url).toBe("string");
+                expect(typeof article.comment_count).toBe("number");
+            });
+    });
+    test("201 successful post, additional properties ignored", () => {
+        const newArticle = {
+            surplus: "test ignore",
+            author: "butter_bridge",
+            title: "Test Title - New Article",
+            body: "Test body - one, two, three",
+            topic: "mitch",
+            article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            extra: 12345,
+        };
+        const expected = {
+            author: "butter_bridge",
+            title: "Test Title - New Article",
+            article_id: 14,
+            body: "Test body - one, two, three",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 0,
+            article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 0,
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(201)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article).toMatchObject(expected);
+            });
+    });
+    test("201 successful post with default img url if not included", () => {
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Test Title - New Article",
+            body: "Test body - one, two, three",
+            topic: "mitch",
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(201)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article.article_img_url).toBe(
+                    "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+                );
+            });
+    });
+    test("201 successful post with default img url is null", () => {
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Test Title - New Article",
+            body: "Test body - one, two, three",
+            topic: "mitch",
+            article_img_url: null,
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(201)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article.article_img_url).toBe(
+                    "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+                );
+            });
+    });
+    test("404 valid but non existent topic", () => {
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Test Title - New Article",
+            body: "Test body - one, two, three",
+            topic: "test",
+            article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("test topic does not exist");
+            });
+    });
+    test("404 valid but non existent author", () => {
+        const newArticle = {
+            author: "al",
+            title: "Test Title - New Article",
+            body: "Test body - one, two, three",
+            topic: "test",
+            article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("al user does not exist");
+            });
+    });
+    test("400 missing required fields", () => {
+        const newArticle = {
+            author: "butter_bridge",
+            title: null,
+            body: "Test body - one, two, three",
+            topic: "mitch",
+            article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+    test("400 missing required fields", () => {
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Test Title - New Article",
+            body: null,
+            topic: "mitch",
+            article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("200 returns updated article", () => {
+        const patchId = 1;
+        const update = {
+            inc_votes: 1000,
+        };
+        return request(app)
+            .patch(`/api/articles/${patchId}`)
+            .send(update)
+            .expect(200)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article.votes).toEqual(1100);
+                expect(typeof article.author).toBe("string");
+                expect(typeof article.title).toBe("string");
+                expect(typeof article.article_id).toBe("number");
+                expect(typeof article.body).toBe("string");
+                expect(typeof article.topic).toBe("string");
+                expect(typeof article.created_at).toBe("string");
+                expect(typeof article.votes).toBe("number");
+                expect(typeof article.article_img_url).toBe("string");
+            });
+    });
+    test("200 returns updated article", () => {
+        const patchId = 1;
+        const update = {
+            inc_votes: -1000,
+        };
+        return request(app)
+            .patch(`/api/articles/${patchId}`)
+            .send(update)
+            .expect(200)
+            .then(({ body }) => {
+                const { article } = body;
+                expect(article.votes).toEqual(-900);
+            });
+    });
+    test("400 missing required fields when request body is null", () => {
+        const update = {
+            inc_votes: null,
+        };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+    test("400 missing required fields when request is null", () => {
+        const update = null;
+        return request(app)
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+    test("400 incorrect fields of wrong property type", () => {
+        const update = {
+            inc_votes: "sausage",
+        };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("400 incorrect type of request", () => {
+        const update = [1000];
+        return request(app)
+            .patch("/api/articles/1")
+            .send(update)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+});
+
+
 describe("GET /api/articles/:article_id", () => {
     test("200 returns an article object with corresponding ID", () => {
         return request(app)
@@ -435,89 +685,6 @@ describe("POST /api/articles/:article_id/commments", () => {
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("invalid input");
-            });
-    });
-});
-
-describe("PATCH /api/articles/:article_id", () => {
-    test("200 returns updated article", () => {
-        const patchId = 1;
-        const update = {
-            inc_votes: 1000,
-        };
-        return request(app)
-            .patch(`/api/articles/${patchId}`)
-            .send(update)
-            .expect(200)
-            .then(({ body }) => {
-                const { article } = body;
-                expect(article.votes).toEqual(1100);
-                expect(typeof article.author).toBe("string");
-                expect(typeof article.title).toBe("string");
-                expect(typeof article.article_id).toBe("number");
-                expect(typeof article.body).toBe("string");
-                expect(typeof article.topic).toBe("string");
-                expect(typeof article.created_at).toBe("string");
-                expect(typeof article.votes).toBe("number");
-                expect(typeof article.article_img_url).toBe("string");
-            });
-    });
-    test("200 returns updated article", () => {
-        const patchId = 1;
-        const update = {
-            inc_votes: -1000,
-        };
-        return request(app)
-            .patch(`/api/articles/${patchId}`)
-            .send(update)
-            .expect(200)
-            .then(({ body }) => {
-                const { article } = body;
-                expect(article.votes).toEqual(-900);
-            });
-    });
-    test("400 missing required fields when request body is null", () => {
-        const update = {
-            inc_votes: null,
-        };
-        return request(app)
-            .patch("/api/articles/1")
-            .send(update)
-            .expect(400)
-            .then(({ body }) => {
-                expect(body.msg).toBe("23502 - missing required key");
-            });
-    });
-    test("400 missing required fields when request is null", () => {
-        const update = null;
-        return request(app)
-            .patch("/api/articles/1")
-            .send(update)
-            .expect(400)
-            .then(({ body }) => {
-                expect(body.msg).toBe("23502 - missing required key");
-            });
-    });
-    test("400 incorrect fields of wrong property type", () => {
-        const update = {
-            inc_votes: "sausage",
-        };
-        return request(app)
-            .patch("/api/articles/1")
-            .send(update)
-            .expect(400)
-            .then(({ body }) => {
-                expect(body.msg).toBe("22P02 - invalid input");
-            });
-    });
-    test("400 incorrect type of request", () => {
-        const update = [1000];
-        return request(app)
-            .patch("/api/articles/1")
-            .send(update)
-            .expect(400)
-            .then(({ body }) => {
-                expect(body.msg).toBe("23502 - missing required key");
             });
     });
 });
