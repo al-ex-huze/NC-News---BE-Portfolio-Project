@@ -9,13 +9,16 @@ const {
 
 exports.getArticles = (req, res, next) => {
     const { topic, sort_by, order } = req.query;
+    req.query.limit ? limit = req.query.limit : limit = 10;
+    req.query.p ? p = req.query.p : p = 1;
+
     selectTopics()
         .then((topics) => {
             const validTopics = [];
             topics.forEach((topic) => {
                 validTopics.push(topic.slug);
             });
-            return selectArticles(validTopics, topic, sort_by, order);
+            return selectArticles(validTopics, topic, sort_by, order, limit, p);
         })
         .then((articles) => {
             res.status(200).send({ articles });
