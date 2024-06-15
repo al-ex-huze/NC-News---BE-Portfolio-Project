@@ -96,7 +96,6 @@ describe("GET /api/articles", () => {
             .expect("Content-Type", "application/json; charset=utf-8")
             .then(({ body }) => {
                 const { articles } = body;
-                expect(articles.length).toBe(13);
                 articles.forEach((article) => {
                     expect(typeof article.author).toBe("string");
                     expect(typeof article.title).toBe("string");
@@ -473,7 +472,6 @@ describe("PATCH /api/articles/:article_id", () => {
     });
 });
 
-
 describe("GET /api/articles/:article_id", () => {
     test("200 returns an article object with corresponding ID", () => {
         return request(app)
@@ -793,6 +791,157 @@ describe("DELETE /api/comments/:comment_id", () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe("comment 333333 does not exist");
+            });
+    });
+});
+
+describe("GET /api/articles", () => {
+    test("200 returns articles of the default limit length", () => {
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}`)
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles.length).toBe(10);
+                articles.forEach((article) => {
+                    expect(typeof article.author).toBe("string");
+                    expect(typeof article.title).toBe("string");
+                    expect(typeof article.article_id).toBe("number");
+                    expect(typeof article.topic).toBe("string");
+                    expect(typeof article.created_at).toBe("string");
+                    expect(typeof article.votes).toBe("number");
+                    expect(typeof article.article_img_url).toBe("string");
+                    expect(typeof article.comment_count).toBe("number");
+                });
+            });
+    });
+    test("200 returns articles of the limit length, offset by page number", () => {
+        const limit = 5;
+        const p = 2;
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}`)
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles.length).toBe(limit);
+                articles.forEach((article) => {
+                    expect(typeof article.author).toBe("string");
+                    expect(typeof article.title).toBe("string");
+                    expect(typeof article.article_id).toBe("number");
+                    expect(typeof article.topic).toBe("string");
+                    expect(typeof article.created_at).toBe("string");
+                    expect(typeof article.votes).toBe("number");
+                    expect(typeof article.article_img_url).toBe("string");
+                    expect(typeof article.comment_count).toBe("number");
+                });
+            });
+    });
+    test("200 returns total count", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                articles.forEach((article) => {
+                    expect(typeof article.total_count).toBe("number");
+                    expect(article.total_count).toEqual(13);
+                });
+            });
+    });
+    test("200 returns total count with query", () => {
+        return request(app)
+            .get("/api/articles?topic=cats")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                articles.forEach((article) => {
+                    expect(article.total_count).toEqual(1);
+                });
+            });
+    });
+    test("200 returns limited, offset articles plus other queries", () => {
+        const limit = 5;
+        const p = 2;
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}&order=asc`)
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles.length).toBe(limit);
+                expect(articles).toBeSortedBy("created_at");
+            });
+    });
+    test("200 returns limited, offset articles plus other queries", () => {
+        const limit = 5;
+        const p = 2;
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}&topic=mitch`)
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles.length).toBe(limit);
+                expect(articles).toBeSortedBy("created_at", {
+                    descending: true,
+                });
+                articles.forEach((article) => {
+                    expect(article.topic).toBe("mitch");
+                });
+            });
+    });
+    test("200 returns limited, offset articles plus sort by", () => {
+        const limit = 5;
+        const p = 2;
+        return request(app)
+            .get(
+                `/api/articles?limit=${limit}&p=${p}&sort_by=comment_count&order=desc`
+            )
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body;
+                expect(articles.length).toBe(limit);
+                expect(articles).toBeSortedBy("comment_count", {
+                    descending: true,
+                });
+            });
+    });
+    test("400 returns invalid page type", () => {
+        limit = 10;
+        const p = "string";
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("400 returns invalid page number", () => {
+        limit = 10;
+        const p = -1;
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("2201X - negative page number");
+            });
+    });
+    test("400 returns invalid limit type", () => {
+        limit = "string";
+        const p = 1;
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("400 returns invalid limit number", () => {
+        limit = -10;
+        const p = 1;
+        return request(app)
+            .get(`/api/articles?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("2201W - negative limit number");
             });
     });
 });

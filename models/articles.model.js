@@ -1,6 +1,6 @@
 const db = require("../db/connection.js");
 
-exports.selectArticles = (validTopics, topic, sort_by, order) => {
+exports.selectArticles = (validTopics, topic, sort_by, order, limit, p) => {
     const validSortBy = [
         "author",
         "title",
@@ -10,6 +10,8 @@ exports.selectArticles = (validTopics, topic, sort_by, order) => {
         "votes",
         "comment_count",
     ];
+
+    const offset = limit * (p - 1);
 
     if (sort_by && !validSortBy.includes(sort_by)) {
         return Promise.reject({ status: 400, msg: "invalid query: sort_by" });
@@ -26,7 +28,7 @@ exports.selectArticles = (validTopics, topic, sort_by, order) => {
     const queryValues = [];
 
     let queryStr =
-        "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) :: INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
+        "SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) :: INT AS comment_count, COUNT(*) OVER() :: INT AS total_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
 
     if (topic) {
         queryStr += " WHERE topic = $1";
@@ -45,7 +47,13 @@ exports.selectArticles = (validTopics, topic, sort_by, order) => {
         queryStr += " ORDER BY articles.created_at DESC";
     }
 
-    queryStr += " ;";
+    if (topic) {
+    queryStr += " LIMIT $2 OFFSET $3;";  
+    } else {
+        queryStr += " LIMIT $1 OFFSET $2;";  
+    }
+
+    queryValues.push(limit, offset);
 
     return db.query(queryStr, queryValues).then(({ rows }) => {
         return rows;

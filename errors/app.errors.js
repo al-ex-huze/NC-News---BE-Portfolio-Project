@@ -11,6 +11,10 @@ exports.handlePsqlErrors = (err, req, res, next) => {
         res.status(400).send({ msg: "23502 - missing required key" });
     } else if (err.code === "22P02") {
         res.status(400).send({ msg: "22P02 - invalid input" });
+    } else if (err.code === "2201X") {
+        res.status(400).send({ msg: "2201X - negative page number" });
+    } else if (err.code === "2201W") {
+        res.status(400).send({ msg: "2201W - negative limit number" });
     } else if (err.code) {
         console.log(err, "PSQL ERROR");
     } else next(err);
