@@ -37,10 +37,13 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const { article_id } = req.params;
+    req.query.limit ? limit = req.query.limit : limit = 10;
+    req.query.p ? p = req.query.p : p = 1;
 
-    const promises = [selectCommentsByArticleId(article_id)];
+    const promises = [selectCommentsByArticleId(article_id, limit, p)];
 
     if (article_id) {
+
         promises.push(selectArticleById(article_id));
     }
 
