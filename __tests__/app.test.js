@@ -524,7 +524,6 @@ describe("GET /api/articles/:article_id/comments", () => {
             .expect(200)
             .then(({ body }) => {
                 const { comments } = body;
-                expect(comments.length).toBe(11);
                 comments.forEach((comment) => {
                     expect(typeof comment.comment_id).toBe("number");
                     expect(typeof comment.votes).toBe("number");
@@ -939,6 +938,75 @@ describe("GET /api/articles", () => {
         const p = 1;
         return request(app)
             .get(`/api/articles?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("2201W - negative limit number");
+            });
+    });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("200 returns comments paginated default limit", () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body }) => {
+                console.log(body);
+                const { comments } = body;
+                expect(comments.length).toBe(10);
+                comments.forEach((comment) => {
+                    console.log(comment)
+                expect(typeof comment.total_count).toBe("number");
+                });
+            });
+    });
+    test("200 returns comments limit and offset", () => {
+        const limit = 5;
+        const p = 2;
+        return request(app)
+            .get(`/api/articles/1/comments?limit=${limit}&p=${p}`)
+            .expect(200)
+            .then(({ body }) => {
+                console.log(body);
+                const { comments } = body;
+                expect(comments.length).toBe(5);
+            });
+    });
+    test("400 returns invalid page type", () => {
+        limit = 10;
+        const p = "string";
+        return request(app)
+            .get(`/api/articles/1/comments?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("400 returns invalid page number", () => {
+        limit = 10;
+        const p = -1;
+        return request(app)
+            .get(`/api/articles/1/comments?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("2201X - negative page number");
+            });
+    });
+    test("400 returns invalid limit type", () => {
+        limit = "string";
+        const p = 1;
+        return request(app)
+            .get(`/api/articles/1/comments?limit=${limit}&p=${p}`)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("400 returns invalid limit number", () => {
+        limit = -10;
+        const p = 1;
+        return request(app)
+            .get(`/api/articles/1/comments?limit=${limit}&p=${p}`)
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("2201W - negative limit number");

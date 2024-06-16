@@ -78,13 +78,15 @@ exports.selectArticleById = (article_id) => {
     });
 };
 
-exports.selectCommentsByArticleId = (article_id) => {
+exports.selectCommentsByArticleId = (article_id, limit, p) => {
+    const offset = limit * (p - 1);
+
     const queryStr =
-        "SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE article_id = $1 ORDER BY created_at DESC;";
+        "SELECT comment_id, votes, created_at, author, body, article_id, COUNT(*) OVER() :: INT AS total_count FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;";
 
-    const queryValue = [article_id];
-
-    return db.query(queryStr, queryValue).then(({ rows }) => {
+    const queryValues = [article_id, limit, offset];
+    
+    return db.query(queryStr, queryValues).then(({ rows }) => {
         const comments = rows;
         return comments;
     });
