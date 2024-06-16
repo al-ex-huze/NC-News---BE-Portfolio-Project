@@ -951,11 +951,9 @@ describe("GET /api/articles/:article_id/comments", () => {
             .get("/api/articles/1/comments")
             .expect(200)
             .then(({ body }) => {
-                console.log(body);
                 const { comments } = body;
                 expect(comments.length).toBe(10);
                 comments.forEach((comment) => {
-                    console.log(comment)
                 expect(typeof comment.total_count).toBe("number");
                 });
             });
@@ -967,7 +965,6 @@ describe("GET /api/articles/:article_id/comments", () => {
             .get(`/api/articles/1/comments?limit=${limit}&p=${p}`)
             .expect(200)
             .then(({ body }) => {
-                console.log(body);
                 const { comments } = body;
                 expect(comments.length).toBe(5);
             });
