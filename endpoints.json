@@ -141,7 +141,10 @@
     },
     "PATCH /api/comments/:commment_id": {
         "description": "updates vote according to input body, returning an object of the updated article",
-        "queries": [],
+        "example request body": {
+            "comment_id": 1,
+            "inc_votes": 1
+        },
         "exampleResponse": {
             "comment": {
                 "comment_id": 1,
