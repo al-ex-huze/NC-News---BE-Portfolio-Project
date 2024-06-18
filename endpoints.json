@@ -82,7 +82,10 @@
     },
     "POST /api/articles/:article_id/comment": {
         "description": "posts a comment, of username and body, to the specified article and returns the full comment object",
-        "queries": [],
+        "example request body": {
+            "username": "butter_bridge",
+            "body": "test body"
+        },
         "exampleResponse": {
             "comment": {
                 "comment_id": 19,
@@ -96,7 +99,9 @@
     },
     "PATCH /api/articles/:article_id": {
         "description": "updates vote according to input body, returning an object of the updated article",
-        "queries": [],
+        "example request body": {
+            "inc_votes": 1
+        },
         "exampleResponse": {
             "article": {
                 "article_id": 1,
@@ -142,7 +147,6 @@
     "PATCH /api/comments/:commment_id": {
         "description": "updates vote according to input body, returning an object of the updated article",
         "example request body": {
-            "comment_id": 1,
             "inc_votes": 1
         },
         "exampleResponse": {
