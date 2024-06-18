@@ -80,7 +80,7 @@
             ]
         }
     },
-    "POST /api/articles/:article_id/comment": {
+    "POST /api/articles/:article_id/comments": {
         "description": "posts a comment, of username and body, to the specified article and returns the full comment object",
         "example request body": {
             "username": "butter_bridge",
