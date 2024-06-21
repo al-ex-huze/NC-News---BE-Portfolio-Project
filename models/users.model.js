@@ -23,3 +23,19 @@ exports.selectUserByUsername = (username) => {
         return user;
     });
 }
+
+exports.insertUser = (newUser) => {
+    const { username, name } = newUser;
+    let { avatar_url } = newUser;
+
+    if (avatar_url === null || avatar_url === "") avatar_url = "https://images.pexels.com/photos/2935956/pexels-photo-2935956.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+
+    const queryStr = "INSERT INTO users (username, name, avatar_url) VALUES ($1, $2, $3) RETURNING *;";
+
+    const queryValues = [username, name, avatar_url];
+
+    return db.query(queryStr, queryValues).then(({ rows }) => {
+        const topic = rows[0];
+        return topic;
+    })
+}

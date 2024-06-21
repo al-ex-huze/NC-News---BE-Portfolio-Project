@@ -15,6 +15,8 @@ exports.handlePsqlErrors = (err, req, res, next) => {
         res.status(400).send({ msg: "2201X - negative page number" });
     } else if (err.code === "2201W") {
         res.status(400).send({ msg: "2201W - negative limit number" });
+    } else if (err.code === "23505") {
+        res.status(400).send({ msg: `23505 - duplicate ${err.detail}` });
     } else if (err.code) {
         console.log(err, "PSQL ERROR");
     } else next(err);
