@@ -11,7 +11,6 @@ exports.getTopics = (req, res, next) => {
 exports.createTopic = (req, res, next) => {
     insertTopic(req.body)
         .then((topic) => {
-            console.log(topic, "return in controller")
             res.status(201);
             res.send({ topic })
         })
