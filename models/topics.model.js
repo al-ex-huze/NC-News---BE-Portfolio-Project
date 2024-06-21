@@ -7,3 +7,17 @@ exports.selectTopics = () => {
         return rows;
     });
 };
+
+exports.insertTopic = (newTopic) => {
+    const { slug, description } = newTopic;
+
+
+    const queryStr = "INSERT INTO topics (slug, description) VALUES ($1, $2) RETURNING *;"
+    
+    const queryValues = [slug, description];
+
+    return db.query(queryStr, queryValues).then(({ rows }) => {
+        const topic = rows[0];
+        return topic;
+    })
+}
