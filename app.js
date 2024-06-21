@@ -7,7 +7,7 @@ app.use(express.json());
 
 const { getEndpoints } = require("./controllers/api.controller.js");
 const { getUsers, getUserByUsername } = require("./controllers/users.controller.js");
-const { getTopics } = require("./controllers/topics.controller.js");
+const { getTopics, createTopic } = require("./controllers/topics.controller.js");
 
 const {
     getArticles,
@@ -35,6 +35,7 @@ app.get("/api/users", getUsers);
 app.get("/api/users/:username", getUserByUsername);
 
 app.get("/api/topics", getTopics);
+app.post("/api/topics", createTopic);
 
 app.get("/api/articles", getArticles);
 app.post("/api/articles", createArticle);

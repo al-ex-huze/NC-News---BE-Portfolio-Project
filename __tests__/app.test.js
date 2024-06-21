@@ -1010,3 +1010,55 @@ describe("GET /api/articles/:article_id/comments", () => {
             });
     });
 });
+
+
+describe("POST /api/topics", () => {
+    test("201 returns new created topic", () => {
+        const newTopic = {
+            slug: "Topic Name",
+            description: "Topic description",
+        };
+        return request(app)
+            .post("/api/topics")
+            .send(newTopic)
+            .expect(201)
+            .then(({ body }) => {
+                const { topic } = body;
+                expect(typeof topic.slug).toBe("string");
+                expect(typeof topic.description).toBe("string");
+                expect(topic.slug).toEqual("Topic Name");
+                expect(topic.description).toEqual("Topic description");
+            });
+    });
+    test("201 successful post, additional properties ignored", () => {
+        const newTopic = {
+            newProperty: "ignore",
+            slug: "Topic Name",
+            description: "Topic description",
+        };
+        return request(app)
+            .post("/api/topics")
+            .send(newTopic)
+            .expect(201)
+            .then(({ body }) => {
+                const { topic } = body;
+                expect(typeof topic.slug).toBe("string");
+                expect(typeof topic.description).toBe("string");
+                expect(topic.slug).toEqual("Topic Name");
+                expect(topic.description).toEqual("Topic description");
+            });
+    });
+    test("400 missing required fields", () => {
+        const newTopic = {
+            slug: null,
+            description: "test body",
+        };
+        return request(app)
+            .post("/api/topics")
+            .send(newTopic)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+});
