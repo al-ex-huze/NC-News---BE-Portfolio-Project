@@ -66,7 +66,14 @@
     },
     "GET /api/articles/:article_id/comments": {
         "description": "serves an array of all comments for the given article, sorted by descending date order",
-        "queries": [],
+        "queries": [
+            {
+                "limit": "returns number of articles accoring to value given, default 10"
+            },
+            {
+                "p": "will offset the articles selected with limit and p, deafult 1"
+            }
+        ],
         "exampleResponse": {
             "comments": [
                 {
