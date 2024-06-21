@@ -160,14 +160,31 @@
         }
     },
     "POST /api/topics": {
-        "description": "posts a top, of slug and description, only slug is required",
+        "description": "creates a new topic, of slug and description, only slug is required",
         "request body": {
             "slug": "topic name here",
             "description": "description here"
         },
         "exampleResponse": {
-            "slug": "topic name here",
-            "description": "description here"
+            "topic": {
+                "slug": "Topic Name",
+                "description": "Topic description"
+            }
+        }
+    },
+    "POST /api/users": {
+        "description": "creates a new user of username (required), name (required) and avatar_url (defaults if not provided)",
+        "request body": {
+            "username": "Alias",
+            "name": "Full Name",
+            "avatar_url": ""
+        },
+        "exampleResponse": {
+            "user": {
+                "username": "Alias",
+                "name": "Full Name",
+                "avatar_url": "https://images.pexels.com/photos/2935956/pexels-photo-2935956.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            }
         }
     }
 }

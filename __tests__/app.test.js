@@ -1011,7 +1011,6 @@ describe("GET /api/articles/:article_id/comments", () => {
     });
 });
 
-
 describe("POST /api/topics", () => {
     test("201 returns new created topic", () => {
         const newTopic = {
@@ -1056,6 +1055,132 @@ describe("POST /api/topics", () => {
         return request(app)
             .post("/api/topics")
             .send(newTopic)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+});
+
+describe("POST /api/users", () => {
+    test("201 returns new user", () => {
+        const newUser = {
+            username: "Alias",
+            name: "Full Name",
+            avatar_url: "avatar_url",
+        };
+        return request(app)
+            .post("/api/users")
+            .send(newUser)
+            .expect(201)
+            .then(({ body }) => {
+                const { user } = body;                
+                expect(typeof user.username).toBe("string");
+                expect(typeof user.name).toBe("string");
+                expect(typeof user.avatar_url).toBe("string");
+                expect(user.username).toEqual("Alias");
+                expect(user.name).toEqual("Full Name");
+                expect(user.avatar_url).toEqual("avatar_url");
+            });
+    });
+    test("201 successful post, additional properties ignored", () => {
+        const newUser = {
+            extra: "ignore",
+            username: "Alias",
+            name: "Full Name",
+            avatar_url: "avatar_url",
+        };
+        return request(app)
+            .post("/api/users")
+            .send(newUser)
+            .expect(201)
+            .then(({ body }) => {
+                const { user } = body;
+                expect(typeof user.username).toBe("string");
+                expect(typeof user.name).toBe("string");
+                expect(typeof user.avatar_url).toBe("string");
+                expect(user.username).toEqual("Alias");
+                expect(user.name).toEqual("Full Name");
+                expect(user.avatar_url).toEqual("avatar_url");
+            });
+    });
+    test("201 returns new user with default avatar url", () => {
+        const newUser = {
+            username: "Alias",
+            name: "Full Name",
+            avatar_url: null,
+        };
+        return request(app)
+            .post("/api/users")
+            .send(newUser)
+            .expect(201)
+            .then(({ body }) => {
+                const { user } = body;
+                expect(typeof user.username).toBe("string");
+                expect(typeof user.name).toBe("string");
+                expect(typeof user.avatar_url).toBe("string");
+                expect(user.username).toEqual("Alias");
+                expect(user.name).toEqual("Full Name");
+                expect(user.avatar_url).toEqual("https://images.pexels.com/photos/2935956/pexels-photo-2935956.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+            });
+    });
+    test("201 returns new user with default avatar url", () => {
+        const newUser = {
+            username: "Alias",
+            name: "Full Name",
+            avatar_url: "",
+        };
+        return request(app)
+            .post("/api/users")
+            .send(newUser)
+            .expect(201)
+            .then(({ body }) => {
+                const { user } = body;
+                expect(typeof user.username).toBe("string");
+                expect(typeof user.name).toBe("string");
+                expect(typeof user.avatar_url).toBe("string");
+                expect(user.username).toEqual("Alias");
+                expect(user.name).toEqual("Full Name");
+                expect(user.avatar_url).toEqual("https://images.pexels.com/photos/2935956/pexels-photo-2935956.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+            });
+    });
+    test("400 duplicate username", () => {
+        const newUser = {
+            username: "butter_bridge",
+            name: "Full Name",
+            avatar_url: "avatar_url",
+        };
+        return request(app)
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23505 - duplicate Key (username)=(butter_bridge) already exists.");
+            });
+    });
+    test("400 missing required fields", () => {
+        const newUser = {
+            username: null,
+            name: "Full Name",
+            avatar_url: "avatar_url",
+        };
+        return request(app)
+            .post("/api/users")
+            .send(newUser)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("23502 - missing required key");
+            });
+    });
+    test("400 missing required fields", () => {
+        const newUser = {
+            username: "Alias",
+            name: null,
+            avatar_url: "avatar_url",
+        };
+        return request(app)
+            .post("/api/users")
+            .send(newUser)
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("23502 - missing required key");

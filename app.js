@@ -6,8 +6,15 @@ app.use(cors());
 app.use(express.json());
 
 const { getEndpoints } = require("./controllers/api.controller.js");
-const { getUsers, getUserByUsername } = require("./controllers/users.controller.js");
-const { getTopics, createTopic } = require("./controllers/topics.controller.js");
+const {
+    getUsers,
+    getUserByUsername,
+    createUser,
+} = require("./controllers/users.controller.js");
+const {
+    getTopics,
+    createTopic,
+} = require("./controllers/topics.controller.js");
 
 const {
     getArticles,
@@ -33,6 +40,7 @@ app.get("/api", getEndpoints);
 
 app.get("/api/users", getUsers);
 app.get("/api/users/:username", getUserByUsername);
+app.post("/api/users", createUser);
 
 app.get("/api/topics", getTopics);
 app.post("/api/topics", createTopic);
