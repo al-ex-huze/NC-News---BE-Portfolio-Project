@@ -954,7 +954,7 @@ describe("GET /api/articles/:article_id/comments", () => {
                 const { comments } = body;
                 expect(comments.length).toBe(10);
                 comments.forEach((comment) => {
-                expect(typeof comment.total_count).toBe("number");
+                    expect(typeof comment.total_count).toBe("number");
                 });
             });
     });
