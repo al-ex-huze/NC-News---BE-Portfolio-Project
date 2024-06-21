@@ -5,12 +5,13 @@ const {
     selectCommentsByArticleId,
     updateArticleVotes,
     insertArticle,
+    deleteArticleById,
 } = require("../models/articles.model.js");
 
 exports.getArticles = (req, res, next) => {
     const { topic, sort_by, order } = req.query;
-    req.query.limit ? limit = req.query.limit : limit = 10;
-    req.query.p ? p = req.query.p : p = 1;
+    req.query.limit ? (limit = req.query.limit) : (limit = 10);
+    req.query.p ? (p = req.query.p) : (p = 1);
 
     selectTopics()
         .then((topics) => {
@@ -37,13 +38,12 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const { article_id } = req.params;
-    req.query.limit ? limit = req.query.limit : limit = 10;
-    req.query.p ? p = req.query.p : p = 1;
+    req.query.limit ? (limit = req.query.limit) : (limit = 10);
+    req.query.p ? (p = req.query.p) : (p = 1);
 
     const promises = [selectCommentsByArticleId(article_id, limit, p)];
 
     if (article_id) {
-
         promises.push(selectArticleById(article_id));
     }
 
@@ -73,6 +73,16 @@ exports.createArticle = (req, res, next) => {
         .then((article) => {
             res.status(201);
             res.send({ article });
+        })
+        .catch(next);
+};
+
+exports.removeArticleById = (req, res, next) => {
+    const { article_id } = req.params;
+
+    deleteArticleById(article_id)
+        .then(() => {
+            res.status(204).send();
         })
         .catch(next);
 };
