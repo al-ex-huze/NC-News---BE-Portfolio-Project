@@ -1187,3 +1187,30 @@ describe("POST /api/users", () => {
             });
     });
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+    test("204 responds with no content", () => {
+        return request(app)
+            .delete("/api/articles/5")
+            .expect(204)
+            .then(({ body }) => {
+                expect(body).toEqual({});
+            });
+    });
+    test("400 responds when invalid article id", () => {
+        return request(app)
+            .delete("/api/articles/invalidId")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("22P02 - invalid input");
+            });
+    });
+    test("404 responds when article not found", () => {
+        return request(app)
+            .delete("/api/articles/333333")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("article 333333 does not exist");
+            });
+    });
+});

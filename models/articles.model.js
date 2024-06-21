@@ -48,9 +48,9 @@ exports.selectArticles = (validTopics, topic, sort_by, order, limit, p) => {
     }
 
     if (topic) {
-    queryStr += " LIMIT $2 OFFSET $3;";  
+        queryStr += " LIMIT $2 OFFSET $3;";
     } else {
-        queryStr += " LIMIT $1 OFFSET $2;";  
+        queryStr += " LIMIT $1 OFFSET $2;";
     }
 
     queryValues.push(limit, offset);
@@ -85,7 +85,7 @@ exports.selectCommentsByArticleId = (article_id, limit, p) => {
         "SELECT comment_id, votes, created_at, author, body, article_id, COUNT(*) OVER() :: INT AS total_count FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;";
 
     const queryValues = [article_id, limit, offset];
-    
+
     return db.query(queryStr, queryValues).then(({ rows }) => {
         const comments = rows;
         return comments;
@@ -109,7 +109,7 @@ exports.updateArticleVotes = (update, article_id) => {
 
 exports.insertArticle = (newArticle) => {
     const { author, title, body, topic, article_img_url } = newArticle;
-    
+
     const checkAuthorQueryStr =
         "SELECT username FROM users WHERE EXISTS (SELECT username FROM users WHERE username = $1);";
 
@@ -123,11 +123,11 @@ exports.insertArticle = (newArticle) => {
     if (article_img_url === null || article_img_url === undefined) {
         queryValues.push(author, title, body, topic);
         queryStr =
-        "INSERT INTO articles (author, title, body, topic) VALUES ($1, $2, $3, $4) RETURNING article_id;";
+            "INSERT INTO articles (author, title, body, topic) VALUES ($1, $2, $3, $4) RETURNING article_id;";
     } else {
         queryValues.push(author, title, body, topic, article_img_url);
         queryStr =
-        "INSERT INTO articles (author, title, body, topic, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING article_id;";
+            "INSERT INTO articles (author, title, body, topic, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING article_id;";
     }
 
     return db.query(checkAuthorQueryStr, [author]).then((isAuthorValid) => {
@@ -154,5 +154,19 @@ exports.insertArticle = (newArticle) => {
                 const { article_id } = article;
                 return article_id;
             });
+    });
+};
+
+exports.deleteArticleById = (article_id) => {
+    const queryStr = "DELETE FROM articles WHERE article_id = $1 RETURNING *;";
+
+    const queryValue = [article_id];
+    return db.query(queryStr, queryValue).then(({ rowCount }) => {
+        if (rowCount === 0) {
+            return Promise.reject({
+                status: 404,
+                msg: `article ${article_id} does not exist`,
+            });
+        }
     });
 };
