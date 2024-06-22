@@ -186,5 +186,13 @@
                 "avatar_url": "https://images.pexels.com/photos/2935956/pexels-photo-2935956.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
             }
         }
+    },
+    "DELETE /api/articles/:article_id": {
+        "description": "deletes article and cascade deletes comments, returning no content",
+        "exampleResponse": {}
+    },
+    "DELETE /api/users/:username": {
+        "description": "deletes user, returning no content",
+        "exampleResponse": {}
     }
 }
