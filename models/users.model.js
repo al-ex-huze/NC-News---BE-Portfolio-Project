@@ -39,3 +39,17 @@ exports.insertUser = (newUser) => {
         return topic;
     })
 }
+
+exports.deleteUserByUsername = (username) => {
+    const queryStr = "DELETE FROM users WHERE username = $1 RETURNING *;"
+
+    const queryValue = [username];
+    return db.query(queryStr, queryValue).then(({ rowCount }) => {
+        if (rowCount === 0) {
+            return Promise.reject({
+                status: 404,
+                msg: `username ${username} does not exist`,
+            });
+        }
+    })
+}

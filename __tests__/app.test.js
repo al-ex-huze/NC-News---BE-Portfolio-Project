@@ -1214,3 +1214,22 @@ describe("DELETE /api/articles/:article_id", () => {
             });
     });
 });
+
+describe("DELETE /api/users/:username", () => {
+    test("204 responds with no content", () => {
+        return request(app)
+            .delete("/api/users/lurker")
+            .expect(204)
+            .then(({ body }) => {
+                expect(body).toEqual({});
+            });
+    });
+    test("404 responds when user not found", () => {
+        return request(app)
+            .delete("/api/users/abcdefgh")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("username abcdefgh does not exist");
+            });
+    });
+});

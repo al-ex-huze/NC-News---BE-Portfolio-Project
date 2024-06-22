@@ -10,6 +10,7 @@ const {
     getUsers,
     getUserByUsername,
     createUser,
+    removeUserByUsername
 } = require("./controllers/users.controller.js");
 const {
     getTopics,
@@ -42,6 +43,7 @@ app.get("/api", getEndpoints);
 app.get("/api/users", getUsers);
 app.get("/api/users/:username", getUserByUsername);
 app.post("/api/users", createUser);
+app.delete("/api/users/:username", removeUserByUsername)
 
 app.get("/api/topics", getTopics);
 app.post("/api/topics", createTopic);
